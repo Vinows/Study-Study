@@ -32,7 +32,7 @@ body {
 /* --- SIDEBAR --- */
 .sidebar {
     width: 300px;
-    background-color: #fce4ec; /* Warna dasar pinkish/light */
+    background-color: #ffffff; /* Warna dasar pinkish/light */
     border-right: 2px solid #333;
     display: flex;
     flex-direction: column;
