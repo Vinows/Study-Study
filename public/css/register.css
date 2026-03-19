@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
+
+/* --- VARIABEL WARNA (Sesuai Desain Foto) --- */
+:root {
+    --bg-color: #215b9c;            /* Biru tua latar belakang */
+    --form-bg: rgba(255, 255, 255, 0.12); /* Efek kaca (Glassmorphism) */
+    --input-bg: rgba(255, 255, 255, 0.25);
+    --btn-yellow: #fcc12d;
+    --btn-yellow-hover: #e5af28;
+    --text-light: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.85);
+}
+
+/* --- RESET & BODY --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- HERO SECTION & LAYOUT GRID --- */
+.hero {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    /* Tambahan efek bintik-bintik samar di latar belakang */
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 15%),
+        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.03) 0%, transparent 15%);
+}
+
+/* --- LAYOUT GRID DISESUAIKAN --- */
+.container {
+    width: 100%;
+    max-width: 1100px; /* Diperlebar sedikit agar ruang gerak lebih luas */
+    display: grid;
+    /* Kita gunakan 3 kolom: 
+       Kolom 1: Kosong (untuk penyeimbang agar form bisa di tengah)
+       Kolom 2: Form (Pusat)
+       Kolom 3: Maskot 
+    */
+    grid-template-columns: 1fr 400px 1fr; 
+    grid-template-areas:
+        "title title title"
+        "subtitle subtitle subtitle"
+        ". form image"
+        "links links links";
+    gap: 20px;
+    align-items: center;
+    justify-items: center;
+}
+
+/* Trik Ajaib: Mengeluarkan isi hero-content agar bisa diatur oleh Grid .container */
+.hero-content {
+    display: contents;
+}
+
+/* --- JUDUL & SUBJUDUL --- */
+.hero-title {
+    grid-area: title;
+    font-size: 3.2rem;
+    font-weight: 800;
+    margin: 0 0 -5px 0;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.hero-subtitle {
+    grid-area: subtitle;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* --- KOTAK FORM KACA --- */
+.auth-form {
+    grid-area: form;
+    background: var(--form-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 40px 35px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    /* Hapus justify-self: end agar tetap di center kolomnya */
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* --- STYLING INPUT & LABEL (Meniru Placeholder) --- */
+.form-control {
+    width: 100%;
+    padding: 15px 20px;
+    background: var(--input-bg);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--btn-yellow);
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 15px rgba(252, 193, 45, 0.2);
+}
+
+/* Di HTML Anda menggunakan <label>, tapi di foto terlihat seperti teks di dalam kotak. 
+   Ini trik CSS untuk membuat label bertindak seperti placeholder! */
+.form-group label {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    pointer-events: none; /* Agar klik tembus ke input */
+    transition: 0.2s ease;
+}
+
+/* Sembunyikan label saat sedang mengetik atau jika kotak sudah terisi */
+.form-group:focus-within label,
+.form-group:has(input:valid) label {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* --- TOMBOL KUNING --- */
+.btn-primary {
+    background: var(--btn-yellow);
+    color: #333;
+    border: none;
+    padding: 16px;
+    width: 100%;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(252, 193, 45, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--btn-yellow-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(252, 193, 45, 0.4);
+}
+
+/* --- MASKOT (GAMBAR KANAN) --- */
+.hero-image {
+    grid-area: image;
+    justify-self: start; /* Tetap menempel ke arah form */
+    margin-left: -20px; /* Sedikit mendekat ke form agar terlihat menyatu */
+}
+
+.duo-mascot img {
+    width: 260px;
+    height: auto;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.25));
+    animation: float 4s ease-in-out infinite;
+}
+
+/* --- LINK BAWAH --- */
+.auth-links {
+    grid-area: links;
+    margin-top: 40px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.auth-links p {
+    color: var(--text-dim);
+}
+
+.auth-links .link {
+    color: var(--btn-yellow);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 5px;
+}
+
+.auth-links .link:hover {
+    text-decoration: underline;
+}
+
+/* --- ANIMASI MENGAMBANG UNTUK MASKOT --- */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* --- RESPONSIVE UNTUK HP --- */
+@media (max-width: 900px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "title"
+            "subtitle"
+            "form"
+            "image"
+            "links";
+    }
+    
+    .hero-image {
+        justify-self: center;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
