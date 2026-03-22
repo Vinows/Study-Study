@@ -66,7 +66,7 @@
             <a href="/challenge" class="menu-item">Challenge</a>
             <a href="/progress" class="menu-item active">Progress</a>
             <a href="/history" class="menu-item">History</a>
-            <a href="profile" class="menu-item">Profile</a>
+            <a href="/profile" class="menu-item">Profile</a>
         </nav>
         <div class="sidebar-mascot">
             <img src="/assets/Image1.png" alt="Mascot">

@@ -29,7 +29,7 @@
                     <span class="category">Pelajaran Matematika</span>
                 </div>
 
-                 <div class="challenge-card">
+                <div class="challenge-card">
                     <h3>Tantangan 2</h3>
                     <p>Deskripsi tantangan...</p>
                     <span class="category">Pelajaran Matematika</span>
