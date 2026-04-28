@@ -8,10 +8,10 @@ $router = new \App\Core\Router();
 $router->add('GET', '/', 'LandingController', 'index');
 $router->add('GET', '/login', 'AuthController', 'login');
 $router->add('GET', '/register', 'AuthController', 'register');
-$router->add('GET', '/challenge', 'ChallengeController', 'index');
-$router->add('GET', '/progress', 'ProgressController', 'index');
-$router->add('GET', '/history', 'HistoryController', 'index');
-$router->add('GET', '/profile', 'ProfileController', 'index');
+$router->add('GET', '/challenge', 'ChallengeController', 'Challenge');
+$router->add('GET', '/progress', 'ProgressController', 'Progress');
+$router->add('GET', '/history', 'HistoryController', 'History');
+$router->add('GET', '/profile', 'ProfileController', 'Profile');
 
 $router->run();
 ?>
