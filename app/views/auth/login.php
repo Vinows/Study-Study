@@ -1,3 +1,39 @@
+<?php
+session_start();
+require '../app/config/db.php';
+
+// Jika user sudah login, langsung arahkan ke profile
+if (isset($_SESSION['user_id'])) {
+    header("Location: profile.php");
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Cari user berdasarkan email
+    $result = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        // Cek kecocokan password
+        if (password_verify($password, $user['password'])) {
+            // Set session
+            $_SESSION['user_id'] = $user['id'];
+            
+            // Arahkan ke halaman profile / challenge
+            header("Location: profile.php");
+            exit;
+        } else {
+            $error = "Kata sandi salah!";
+        }
+    } else {
+        $error = "Email tidak terdaftar!";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

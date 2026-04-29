@@ -1,3 +1,21 @@
+<?php
+session_start();
+require '../app/config/db.php';
+
+// Jika belum login, tendang kembali ke halaman login
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Ambil data spesifik user yang login
+$query = "SELECT name, email FROM users WHERE id = $user_id";
+$result = $conn->query($query);
+$user_data = $result->fetch_assoc();
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

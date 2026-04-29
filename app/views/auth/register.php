@@ -1,3 +1,38 @@
+<?php
+session_start();
+require '../app/config/db.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    if ($password !== $confirm_password) {
+        $error = "Kata sandi tidak cocok!";
+    } else {
+        // Cek apakah email sudah terdaftar
+        $cek_email = $conn->query("SELECT id FROM users WHERE email = '$email'");
+        if ($cek_email->num_rows > 0) {
+            $error = "Email sudah terdaftar!";
+        } else {
+            // Enkripsi password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Simpan ke database
+            $query = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$hashed_password')";
+            if ($conn->query($query)) {
+                // Jika sukses, arahkan ke login
+                header("Location: login.php?registered=true");
+                exit;
+            } else {
+                $error = "Terjadi kesalahan sistem.";
+            }
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

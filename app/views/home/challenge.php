@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../app/config/db.php';
 
 // Jika tombol "Selesaikan" ditekan
 if (isset($_POST['complete_challenge'])) {
@@ -17,6 +17,7 @@ $query = "SELECT c.*, uc.status
         WHERE c.week_number = $current_week";
 $result = $conn->query($query);
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

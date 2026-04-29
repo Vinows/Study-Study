@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../app/config/db.php';
 
 // Hitung Total Challenge minggu ini
 $total_query = $conn->query("SELECT COUNT(*) as count FROM challenges WHERE week_number = $current_week");

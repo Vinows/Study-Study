@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../app/config/db.php';
 
 // Array untuk menyimpan history minggu-minggu sebelumnya
 $history_data = [];
