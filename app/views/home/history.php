@@ -1,152 +1,78 @@
+<?php
+require 'db.php';
+
+// Array untuk menyimpan history minggu-minggu sebelumnya
+$history_data = [];
+
+// Looping dari minggu pertama sampai minggu sebelum current_week
+for ($w = 1; $w < $current_week; $w++) {
+    // Total challenge di minggu ke-$w
+    $t_query = $conn->query("SELECT COUNT(*) as count FROM challenges WHERE week_number = $w");
+    $total = $t_query->fetch_assoc()['count'];
+
+    // Total selesai di minggu ke-$w
+    $c_query = $conn->query("
+        SELECT COUNT(*) as count FROM user_challenges uc 
+        JOIN challenges c ON uc.challenge_id = c.id 
+        WHERE c.week_number = $w AND uc.user_id = $user_id AND uc.status = 'completed'
+    ");
+    $completed = $c_query->fetch_assoc()['count'];
+
+    $pct = ($total > 0) ? round(($completed / $total) * 100) : 0;
+    
+    // Masukkan ke array
+    $history_data[$w] = $pct;
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyTrack - History</title>
     <link rel="stylesheet" href="/css/home.css">
-    
     <style>
-        /* --- KHUSUS HALAMAN HISTORY --- */
-        .main-content {
-            padding: 40px;
-            overflow-y: auto;
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            width: 100%;
-            max-width: 1150px;
-        }
-
-        /* --- CARD STYLE --- */
-        .history-card {
-            background: #ffffff;
-            border: 3px solid #000;
-            border-radius: 20px;
-            padding: 25px 35px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-        }
-
-        .history-card:hover {
-            transform: scale(1.01);
-        }
-
-        .history-info {
-            flex: 1;
-        }
-
-        .history-info label {
-            display: block;
-            font-weight: 800;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #000;
-        }
-
-        /* --- PROGRESS BAR MINI --- */
-        .progress-mini-outline {
-            width: 90%;
-            height: 40px;
-            background: #eee;
-            border: 3px solid #000;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        .progress-mini-fill {
-            height: 100%;
-            background: #76ff03; /* Hijau Terang */
-            border-right: 3px solid #000;
-        }
-
-        /* --- ICON PANAH --- */
-        .arrow-icon {
-            font-size: 2.5rem;
-            font-weight: 300;
-            color: #333;
-            cursor: pointer;
-            padding-left: 20px;
-            line-height: 1;
-        }
-
-        /* Animasi sederhana untuk panah */
-        .history-card:hover .arrow-icon {
-            transform: translateX(5px);
-            color: #000;
-        }
+        /* ... STYLE BAWAAN ANDA ... */
+        .history-list { display: flex; flex-direction: column; gap: 30px; }
+        .history-card { background: #ffffff; border: 3px solid #000; border-radius: 20px; padding: 25px 35px; display: flex; align-items: center; justify-content: space-between; box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.05); }
+        .progress-mini-outline { width: 90%; height: 40px; background: #eee; border: 3px solid #000; border-radius: 15px; overflow: hidden; }
+        .progress-mini-fill { height: 100%; background: #76ff03; border-right: 3px solid #000; transition: 0.5s; }
+        .arrow-icon { font-size: 2.5rem; cursor: pointer; }
     </style>
 </head>
 <body>
-
 <div class="dashboard-container">
     <aside class="sidebar">
         <h1 class="logo">StudyTrack</h1>
         <nav class="menu">
-            <a href="/challenge" class="menu-item">Challenge</a>
-            <a href="/progress" class="menu-item">Progress</a>
-            <a href="/history" class="menu-item active">History</a>
-            <a href="/profile" class="menu-item">Profile</a>
+            <a href="challenge.php" class="menu-item">Challenge</a>
+            <a href="progress.php" class="menu-item">Progress</a>
+            <a href="history.php" class="menu-item active">History</a>
+            <a href="profile.php" class="menu-item">Profile</a>
         </nav>
-        <div class="sidebar-mascot">
-            <img src="/assets/Image1.png" alt="Mascot">
-        </div>
     </aside>
 
     <main class="main-content">
+        <h2 class="section-title">History Progress</h2>
         <div class="history-list">
             
-            <div class="history-card">
-                <div class="history-info">
-                    <label>Progress Minggu 1</label>
-                    <div class="progress-mini-outline">
-                        <div class="progress-mini-fill" style="width: 100%;"></div>
+            <?php if(empty($history_data)): ?>
+                <p style="color:white; font-size: 1.2rem;">Belum ada history karena ini masih minggu pertama.</p>
+            <?php else: ?>
+                <?php foreach($history_data as $minggu => $persentase): ?>
+                <div class="history-card">
+                    <div class="history-info">
+                        <label>Progress Minggu <?= $minggu ?></label>
+                        <div class="progress-mini-outline">
+                            <div class="progress-mini-fill" style="width: <?= $persentase ?>%;"></div>
+                        </div>
                     </div>
+                    <div class="arrow-icon">❯</div>
                 </div>
-                <div class="arrow-icon">❯</div>
-            </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
 
-            <div class="history-card">
-                <div class="history-info">
-                    <label>Progress Minggu 2</label>
-                    <div class="progress-mini-outline">
-                        <div class="progress-mini-fill" style="width: 85%;"></div>
-                    </div>
-                </div>
-                <div class="arrow-icon">❯</div>
-            </div>
-
-            <div class="history-card">
-                <div class="history-info">
-                    <label>Progress Minggu 3</label>
-                    <div class="progress-mini-outline">
-                        <div class="progress-mini-fill" style="width: 65%;"></div>
-                    </div>
-                </div>
-                <div class="arrow-icon">❯</div>
-            </div>
-
-            <div class="history-card">
-                <div class="history-info">
-                    <label>Progress Minggu 4</label>
-                    <div class="progress-mini-outline">
-                        <div class="progress-mini-fill" style="width: 45%;"></div>
-                    </div>
-                </div>
-                <div class="arrow-icon">❯</div>
-            </div>
-
-            <div class="history-card">
-                <div class="history-info">
-                    <label>Progress Minggu 5</label>
-                    <div class="progress-mini-outline">
-                        <div class="progress-mini-fill" style="width: 25%;"></div>
-                    </div>
-                </div>
-                <div class="arrow-icon">❯</div>
+        </div>
+    </main>
+</div>
+</body>
+</html>
