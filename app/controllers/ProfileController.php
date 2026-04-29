@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 class ProfileController {
-    public function index() {
+    public function Profile() {
         require_once '../app/views/home/profile.php';
     }
 }

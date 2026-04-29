@@ -2,7 +2,7 @@
 namespace App\Controllers;
 
 class HistoryController {
-    public function index() {
+    public function History() {
         require_once '../app/views/home/history.php';
     }
 }
