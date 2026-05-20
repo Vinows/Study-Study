@@ -1,29 +1,27 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require '../app/config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    $name = $conn->real_escape_string(trim($_POST['name'] ?? ''));
+    $email = $conn->real_escape_string(trim($_POST['email'] ?? ''));
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $role = in_array($_POST['role'] ?? 'student', ['student', 'teacher']) ? $_POST['role'] : 'student';
 
     if ($password !== $confirm_password) {
         $error = "Kata sandi tidak cocok!";
     } else {
-        // Cek apakah email sudah terdaftar
         $cek_email = $conn->query("SELECT id FROM users WHERE email = '$email'");
         if ($cek_email->num_rows > 0) {
             $error = "Email sudah terdaftar!";
         } else {
-            // Enkripsi password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
-            // Simpan ke database
-            $query = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$hashed_password')";
+            $query = "INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$hashed_password', '$role')";
             if ($conn->query($query)) {
-                // Jika sukses, arahkan ke login
-                header("Location: login.php?registered=true");
+                header("Location: /login?registered=true");
                 exit;
             } else {
                 $error = "Terjadi kesalahan sistem.";
@@ -61,6 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="role">Daftar sebagai</label>
+                    <select id="role" name="role" class="form-control" required>
+                        <option value="student">Siswa</option>
+                        <option value="teacher">Guru</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="password">Kata Sandi</label>

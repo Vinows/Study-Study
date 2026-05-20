@@ -12,6 +12,8 @@ $router->add('GET', '/challenge', 'ChallengeController', 'Challenge');
 $router->add('GET', '/progress', 'ProgressController', 'Progress');
 $router->add('GET', '/history', 'HistoryController', 'History');
 $router->add('GET', '/profile', 'ProfileController', 'Profile');
+$router->add('GET', '/teacher', 'TeacherController', 'Teacher');
+$router->add('GET', '/logout', 'AuthController', 'logout');
 
 $router->run();
 ?>

@@ -1,16 +1,28 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require '../app/config/db.php';
 
-// Jika tombol "Selesaikan" ditekan
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /login');
+    exit;
+}
+
+if (($_SESSION['role'] ?? 'student') === 'teacher') {
+    header('Location: /teacher');
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
 if (isset($_POST['complete_challenge'])) {
-    $cid = $_POST['challenge_id'];
-    // Masukkan data ke user_challenges, jika sudah ada, update menjadi completed
+    $cid = intval($_POST['challenge_id']);
     $conn->query("INSERT INTO user_challenges (user_id, challenge_id, status) 
                 VALUES ($user_id, $cid, 'completed') 
                 ON DUPLICATE KEY UPDATE status='completed'");
 }
 
-// Ambil data challenge minggu ini dan status pengerjaannya
 $query = "SELECT c.*, uc.status 
         FROM challenges c 
         LEFT JOIN user_challenges uc ON c.id = uc.challenge_id AND uc.user_id = $user_id 
@@ -40,10 +52,11 @@ $result = $conn->query($query);
         <aside class="sidebar">
             <h1 class="logo">StudyTrack</h1>
             <nav class="menu">
-                <a href="challenge.php" class="menu-item active">Challenge</a>
-                <a href="progress.php" class="menu-item">Progress</a>
-                <a href="history.php" class="menu-item">History</a>
-                <a href="profile.php" class="menu-item">Profile</a>
+                <a href="/challenge" class="menu-item active">Challenge</a>
+                <a href="/progress" class="menu-item">Progress</a>
+                <a href="/history" class="menu-item">History</a>
+                <a href="/profile" class="menu-item">Profile</a>
+                <a href="/logout" class="menu-item">Keluar</a>
             </nav>
         </aside>
         

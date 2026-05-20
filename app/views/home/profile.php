@@ -1,19 +1,24 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require '../app/config/db.php';
 
-// Jika belum login, tendang kembali ke halaman login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login");
+    exit;
+}
+
+if (($_SESSION['role'] ?? 'student') === 'teacher') {
+    header("Location: /teacher");
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
 
-// Ambil data spesifik user yang login
-$query = "SELECT name, email FROM users WHERE id = $user_id";
+$query = "SELECT name, email, role FROM users WHERE id = $user_id";
 $result = $conn->query($query);
-$user_data = $result->fetch_assoc();
+$user_data = $result ? $result->fetch_assoc() : null;
 ?>
 
 <!DOCTYPE html>
@@ -209,6 +214,7 @@ $user_data = $result->fetch_assoc();
             <a href="/progress" class="menu-item">Progress</a>
             <a href="/history" class="menu-item">History</a>
             <a href="/profile" class="menu-item active">Profile</a>
+            <a href="/logout" class="menu-item">Keluar</a>
         </nav>
         <div class="sidebar-mascot">
             <img src="/assets/Image1.png" alt="Mascot">

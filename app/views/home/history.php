@@ -1,16 +1,26 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require '../app/config/db.php';
 
-// Array untuk menyimpan history minggu-minggu sebelumnya
-$history_data = [];
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /login');
+    exit;
+}
 
-// Looping dari minggu pertama sampai minggu sebelum current_week
+if (($_SESSION['role'] ?? 'student') === 'teacher') {
+    header('Location: /teacher');
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+$history_data = [];
 for ($w = 1; $w < $current_week; $w++) {
-    // Total challenge di minggu ke-$w
     $t_query = $conn->query("SELECT COUNT(*) as count FROM challenges WHERE week_number = $w");
     $total = $t_query->fetch_assoc()['count'];
 
-    // Total selesai di minggu ke-$w
     $c_query = $conn->query("
         SELECT COUNT(*) as count FROM user_challenges uc 
         JOIN challenges c ON uc.challenge_id = c.id 
@@ -19,8 +29,6 @@ for ($w = 1; $w < $current_week; $w++) {
     $completed = $c_query->fetch_assoc()['count'];
 
     $pct = ($total > 0) ? round(($completed / $total) * 100) : 0;
-    
-    // Masukkan ke array
     $history_data[$w] = $pct;
 }
 ?>
@@ -44,10 +52,11 @@ for ($w = 1; $w < $current_week; $w++) {
     <aside class="sidebar">
         <h1 class="logo">StudyTrack</h1>
         <nav class="menu">
-            <a href="challenge.php" class="menu-item">Challenge</a>
-            <a href="progress.php" class="menu-item">Progress</a>
-            <a href="history.php" class="menu-item active">History</a>
-            <a href="profile.php" class="menu-item">Profile</a>
+            <a href="/challenge" class="menu-item">Challenge</a>
+            <a href="/progress" class="menu-item">Progress</a>
+            <a href="/history" class="menu-item active">History</a>
+            <a href="/profile" class="menu-item">Profile</a>
+            <a href="/logout" class="menu-item">Keluar</a>
         </nav>
     </aside>
 

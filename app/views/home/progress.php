@@ -1,11 +1,24 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require '../app/config/db.php';
 
-// Hitung Total Challenge minggu ini
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /login');
+    exit;
+}
+
+if (($_SESSION['role'] ?? 'student') === 'teacher') {
+    header('Location: /teacher');
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
 $total_query = $conn->query("SELECT COUNT(*) as count FROM challenges WHERE week_number = $current_week");
 $total_challenges = $total_query->fetch_assoc()['count'];
 
-// Hitung Challenge yang sudah 'completed' oleh user minggu ini
 $completed_query = $conn->query("
     SELECT COUNT(*) as count FROM user_challenges uc 
     JOIN challenges c ON uc.challenge_id = c.id 
@@ -38,10 +51,11 @@ if ($total_challenges > 0) {
     <aside class="sidebar">
         <h1 class="logo">StudyTrack</h1>
         <nav class="menu">
-            <a href="challenge.php" class="menu-item">Challenge</a>
-            <a href="progress.php" class="menu-item active">Progress</a>
-            <a href="history.php" class="menu-item">History</a>
-            <a href="profile.php" class="menu-item">Profile</a>
+            <a href="/challenge" class="menu-item">Challenge</a>
+            <a href="/progress" class="menu-item active">Progress</a>
+            <a href="/history" class="menu-item">History</a>
+            <a href="/profile" class="menu-item">Profile</a>
+            <a href="/logout" class="menu-item">Keluar</a>
         </nav>
     </aside>
 
