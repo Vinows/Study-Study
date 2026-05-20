@@ -13,6 +13,12 @@ $router->add('GET', '/progress', 'ProgressController', 'Progress');
 $router->add('GET', '/history', 'HistoryController', 'History');
 $router->add('GET', '/profile', 'ProfileController', 'Profile');
 $router->add('GET', '/teacher', 'TeacherController', 'Teacher');
+$router->add('GET', '/teacher/challenges', 'TeacherController', 'Challenges');
+$router->add('GET', '/teacher/challenges/create', 'TeacherController', 'CreateChallenge');
+$router->add('POST', '/teacher/challenges/create', 'TeacherController', 'CreateChallenge');
+$router->add('GET', '/teacher/challenges/{id}/edit', 'TeacherController', 'EditChallenge');
+$router->add('POST', '/teacher/challenges/{id}/edit', 'TeacherController', 'EditChallenge');
+$router->add('GET', '/teacher/challenges/{id}/delete', 'TeacherController', 'DeleteChallenge');
 $router->add('GET', '/logout', 'AuthController', 'logout');
 
 $router->run();

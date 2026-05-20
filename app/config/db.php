@@ -55,6 +55,20 @@ foreach ($schema as $sql) {
     $conn->query($sql);
 }
 
+$fieldsToAdd = [
+    'due_date' => "ALTER TABLE challenges ADD COLUMN due_date DATETIME NULL",
+    'points' => "ALTER TABLE challenges ADD COLUMN points INT NOT NULL DEFAULT 0",
+    'challenge_type' => "ALTER TABLE challenges ADD COLUMN challenge_type VARCHAR(50) NOT NULL DEFAULT 'Tugas'",
+    'status' => "ALTER TABLE challenges ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active'",
+];
+
+foreach ($fieldsToAdd as $field => $sql) {
+    $check = $conn->query("SHOW COLUMNS FROM challenges LIKE '$field'");
+    if ($check && $check->num_rows === 0) {
+        $conn->query($sql);
+    }
+}
+
 $defaultTeacher = $conn->query("SELECT id FROM users WHERE email = 'teacher@studytrack.local'")->num_rows;
 if (! $defaultTeacher) {
     $password = password_hash('teacher123', PASSWORD_DEFAULT);

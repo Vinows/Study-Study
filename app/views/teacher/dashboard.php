@@ -43,6 +43,7 @@ $challenge_count = $conn->query("SELECT COUNT(*) as count FROM challenges")->fet
             <div class="logo">StudyTrack Guru</div>
             <nav class="menu">
                 <a href="/teacher" class="menu-item">Dashboard</a>
+                <a href="/teacher/challenges" class="menu-item">Daftar tantangan</a>
                 <a href="/logout" class="menu-item">Keluar</a>
             </nav>
         </aside>
