@@ -111,10 +111,23 @@ $result = $conn->query($query);
                         <?php if ($row['status'] === 'completed'): ?>
                             <button class="btn-done" disabled>Sudah Selesai ✓</button>
                         <?php else: ?>
-                            <form method="POST">
-                                <input type="hidden" name="challenge_id" value="<?= $row['id'] ?>">
-                                <button type="submit" name="complete_challenge" class="btn-complete">Selesaikan</button>
-                            </form>
+                            <?php if ($row['challenge_type'] === 'Tugas'): ?>
+                                <form action="/challenge/submit" method="POST" enctype="multipart/form-data">
+                                    <input type="hidden" name="challenge_id" value="<?= $row['id'] ?>">
+                                    <div style="margin:12px 0;">
+                                        <textarea name="answer_text" placeholder="Tulis jawaban singkat atau instruksi pengumpulan..." rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb"></textarea>
+                                    </div>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                                        <input type="file" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
+                                    </div>
+                                    <button type="submit" name="submit_answer" class="btn-complete">Kirim Jawaban</button>
+                                </form>
+                            <?php else: ?>
+                                <form method="POST">
+                                    <input type="hidden" name="challenge_id" value="<?= $row['id'] ?>">
+                                    <button type="submit" name="complete_challenge" class="btn-complete">Selesaikan</button>
+                                </form>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 <?php endwhile; ?>

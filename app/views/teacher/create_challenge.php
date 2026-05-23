@@ -40,6 +40,13 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
         .form-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 18px; }
         .btn-secondary { border: 1px solid #cbd5e1; background: #fff; color: #334155; padding: 14px 24px; border-radius: 16px; text-decoration: none; font-weight: 700; }
         .btn-primary { border: none; background: #2563eb; color: #fff; padding: 14px 24px; border-radius: 16px; font-weight: 700; cursor: pointer; }
+        .choice-cards { display: flex; gap: 12px; }
+        .choice-card { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; cursor: pointer; flex: 1; }
+        .choice-card input { display: none; }
+        .choice-card .choice-title { font-weight: 800; }
+        .choice-card .choice-desc { color: #6b7280; font-size: 0.95rem; }
+        .choice-card input:checked + .choice-content { border-color: #2563eb; }
+        .choice-card.selected { border-color: #2563eb; background: #eff6ff; }
     </style>
 </head>
 <body>
@@ -58,7 +65,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
         <p class="page-subtitle">Isi detail tantangan untuk siswa dan simpan.</p>
 
         <div class="form-card">
-            <form action="/teacher/challenges/create" method="POST">
+            <form action="/teacher/challenges/create" method="POST" enctype="multipart/form-data">
                 <div class="field-grid">
                     <div class="field-group full">
                         <label for="title">Judul Tantangan</label>
@@ -79,10 +86,22 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                     </div>
                     <div class="field-group">
                         <label for="challenge_type">Tipe Tantangan</label>
-                        <select id="challenge_type" name="challenge_type" required>
-                            <option value="Tugas">Tugas</option>
-                            <option value="Kuis">Kuis</option>
-                        </select>
+                        <div class="choice-cards">
+                            <label class="choice-card">
+                                <input type="radio" name="challenge_type" value="Tugas" checked>
+                                <div class="choice-content">
+                                    <div class="choice-title">Tugas</div>
+                                    <div class="choice-desc">Siswa mengerjakan tugas dan mengumpulkan hasil</div>
+                                </div>
+                            </label>
+                            <label class="choice-card">
+                                <input type="radio" name="challenge_type" value="Kuis">
+                                <div class="choice-content">
+                                    <div class="choice-title">Kuis</div>
+                                    <div class="choice-desc">Siswa menjawab pertanyaan dalam bentuk kuis</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
                     <div class="field-group">
                         <label for="week_number">Tingkat/Kelas</label>
@@ -95,6 +114,13 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                     <div class="field-group full">
                         <label for="due_date">Tenggat Waktu</label>
                         <input type="datetime-local" id="due_date" name="due_date">
+                    </div>
+                    <div class="field-group full">
+                        <label for="attachment">Lampiran (opsional)</label>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
+                            <small style="color:#64748b;">Maks. 10MB (PDF, DOC, DOCX, PPT, PPTX, JPG, PNG)</small>
+                        </div>
                     </div>
                 </div>
 

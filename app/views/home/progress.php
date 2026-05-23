@@ -31,6 +31,11 @@ $progress_percentage = 0;
 if ($total_challenges > 0) {
     $progress_percentage = round(($completed_challenges / $total_challenges) * 100);
 }
+
+// Fetch student submissions with challenge info
+$sub_q = $conn->query("SELECT s.*, c.title AS challenge_title FROM submissions s JOIN challenges c ON s.challenge_id = c.id WHERE s.user_id = $user_id ORDER BY s.created_at DESC");
+$submissions = [];
+if ($sub_q) while ($r = $sub_q->fetch_assoc()) $submissions[] = $r;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -68,6 +73,37 @@ if ($total_challenges > 0) {
             </div>
 
             <p class="progress-text">Kamu telah menyelesaikan <?= $completed_challenges ?> dari <?= $total_challenges ?> challenge (<?= $progress_percentage ?>%).</p>
+        </div>
+        
+        <div style="margin-top:28px">
+            <h2 style="margin:0 0 12px">Penilaian & Feedback</h2>
+            <?php if (empty($submissions)): ?>
+                <div class="card" style="padding:18px;border-radius:12px;background:#fff">Belum ada submisi atau belum dinilai.</div>
+            <?php else: ?>
+                <?php foreach ($submissions as $s): ?>
+                    <div class="card" style="background:#fff;padding:18px;border-radius:12px;margin-bottom:12px;box-shadow:0 10px 30px rgba(2,6,23,0.06)">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <strong><?= htmlspecialchars($s['challenge_title']) ?></strong>
+                                <div style="color:#64748b;font-size:0.95rem">Dikirim: <?= date('d M Y H:i', strtotime($s['created_at'])) ?></div>
+                            </div>
+                            <div style="text-align:right">
+                                <div style="font-weight:800;color:#334155">Status: <?= $s['status'] === 'graded' ? 'Dinilai' : 'Menunggu' ?></div>
+                                <?php if ($s['status'] === 'graded'): ?>
+                                    <div style="margin-top:6px;font-weight:800;color:#0b5">Nilai: <?= intval($s['grade']) ?></div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px;color:#475569">Jawaban: <?= nl2br(htmlspecialchars($s['answer_text'])) ?></div>
+                        <?php if (!empty($s['attachment'])): ?>
+                            <div style="margin-top:8px"><a href="<?= htmlspecialchars($s['attachment']) ?>" target="_blank">Lihat lampiran</a></div>
+                        <?php endif; ?>
+                        <?php if (!empty($s['feedback'])): ?>
+                            <div style="margin-top:12px;background:#f8fafc;padding:12px;border-radius:8px;color:#334155">Feedback: <?= nl2br(htmlspecialchars($s['feedback'])) ?></div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </main>
 </div>

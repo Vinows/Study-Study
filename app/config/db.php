@@ -49,6 +49,20 @@ $schema = [
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (challenge_id) REFERENCES challenges(id) ON DELETE CASCADE
     )",
+    "CREATE TABLE IF NOT EXISTS submissions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        challenge_id INT NOT NULL,
+        answer_text TEXT NULL,
+        attachment VARCHAR(255) NULL,
+        grade INT NULL,
+        feedback TEXT NULL,
+        status ENUM('pending','graded') NOT NULL DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        graded_at DATETIME NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (challenge_id) REFERENCES challenges(id) ON DELETE CASCADE
+    )",
 ];
 
 foreach ($schema as $sql) {
@@ -60,6 +74,7 @@ $fieldsToAdd = [
     'points' => "ALTER TABLE challenges ADD COLUMN points INT NOT NULL DEFAULT 0",
     'challenge_type' => "ALTER TABLE challenges ADD COLUMN challenge_type VARCHAR(50) NOT NULL DEFAULT 'Tugas'",
     'status' => "ALTER TABLE challenges ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active'",
+        'attachment' => "ALTER TABLE challenges ADD COLUMN attachment VARCHAR(255) NULL",
 ];
 
 foreach ($fieldsToAdd as $field => $sql) {

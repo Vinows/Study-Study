@@ -19,7 +19,12 @@ $router->add('POST', '/teacher/challenges/create', 'TeacherController', 'CreateC
 $router->add('GET', '/teacher/challenges/{id}/edit', 'TeacherController', 'EditChallenge');
 $router->add('POST', '/teacher/challenges/{id}/edit', 'TeacherController', 'EditChallenge');
 $router->add('GET', '/teacher/challenges/{id}/delete', 'TeacherController', 'DeleteChallenge');
+$router->add('GET', '/teacher/challenges/{id}/submissions', 'TeacherController', 'Submissions');
+$router->add('GET', '/teacher/submissions/{id}/grade', 'TeacherController', 'GradeSubmission');
+$router->add('POST', '/teacher/submissions/{id}/grade', 'TeacherController', 'GradeSubmission');
 $router->add('GET', '/logout', 'AuthController', 'logout');
+// Student submission endpoint
+$router->add('POST', '/challenge/submit', 'StudentController', 'SubmitChallenge');
 
 $router->run();
 ?>

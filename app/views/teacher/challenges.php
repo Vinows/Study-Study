@@ -51,6 +51,15 @@ if ($result) {
         .action-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
         .action-button { border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 14px; background: #fff; color: #1f2937; text-decoration: none; font-weight: 700; }
         .action-button.delete { border-color: #fecaca; color: #b91c1c; }
+        /* Delete confirmation modal */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(2,6,23,0.6); display: none; align-items: center; justify-content: center; z-index: 60; }
+        .modal { background: #fff; border-radius: 12px; width: 520px; max-width: 92%; padding: 28px; box-shadow: 0 20px 60px rgba(2,6,23,0.3); text-align: center; }
+        .modal .icon { width: 72px; height: 72px; border-radius: 50%; background: #fff7ed; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+        .modal h3 { margin: 0 0 8px; font-size: 1.25rem; }
+        .modal p { color: #475569; margin: 0 0 18px; }
+        .modal .modal-actions { display:flex; gap:12px; justify-content:center; margin-top:18px; }
+        .btn-danger { background:#ef4444; color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; }
+        .btn-cancel { background:#fff; color:#111827; border:1px solid #e5e7eb; padding:10px 16px; border-radius:8px; font-weight:700; }
     </style>
 </head>
 <body>
@@ -93,6 +102,9 @@ if ($result) {
                     <div class="tag-list">
                         <span class="tag-pill"><?= htmlspecialchars($challenge['category']) ?></span>
                         <span class="tag-pill"><?= htmlspecialchars($challenge['points']) ?> Poin</span>
+                        <?php if (!empty($challenge['attachment'])): ?>
+                            <a class="tag-pill" href="<?= htmlspecialchars($challenge['attachment']) ?>" target="_blank">Lampiran</a>
+                        <?php endif; ?>
                     </div>
                     <div class="meta-list">
                         <div class="meta-item">Minggu ke-<?= htmlspecialchars($challenge['week_number']) ?></div>
@@ -100,12 +112,57 @@ if ($result) {
                     </div>
                     <div class="action-bar">
                         <a href="/teacher/challenges/<?= $challenge['id'] ?>/edit" class="action-button">Edit</a>
-                        <a href="/teacher/challenges/<?= $challenge['id'] ?>/delete" class="action-button delete">Hapus</a>
+                        <button type="button" class="action-button delete js-delete" data-id="<?= $challenge['id'] ?>" data-title="<?= htmlspecialchars($challenge['title'], ENT_QUOTES) ?>">Hapus</button>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
     </main>
 </div>
+
+<!-- Delete confirmation modal -->
+<div class="modal-backdrop" id="deleteModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+        <div class="icon">⚠️</div>
+        <h3 id="delTitle">Hapus Tantangan</h3>
+        <p id="delMessage">Yakin ingin menghapus tantangan ini? Tindakan ini tidak dapat dibatalkan.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" id="cancelDelete">Batal</button>
+            <button class="btn-danger" id="confirmDelete">Ya, Hapus</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const modal = document.getElementById('deleteModal');
+    const delMsg = document.getElementById('delMessage');
+    const confirmBtn = document.getElementById('confirmDelete');
+    const cancelBtn = document.getElementById('cancelDelete');
+    let deleteUrl = null;
+
+    document.querySelectorAll('.js-delete').forEach(btn => {
+        btn.addEventListener('click', function(){
+            const id = this.getAttribute('data-id');
+            const title = this.getAttribute('data-title') || 'tantangan';
+            delMsg.textContent = `Yakin ingin menghapus "${title}"? Tindakan ini tidak dapat dibatalkan.`;
+            deleteUrl = `/teacher/challenges/${id}/delete`;
+            modal.style.display = 'flex';
+        });
+    });
+
+    cancelBtn.addEventListener('click', () => { modal.style.display = 'none'; deleteUrl = null; });
+
+    confirmBtn.addEventListener('click', () => {
+        if (!deleteUrl) return;
+        confirmBtn.disabled = true;
+        fetch(deleteUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(r => r.json())
+            .then(data => { if (data.status === 'ok') window.location.reload(); else { alert('Gagal menghapus'); modal.style.display='none'; } })
+            .catch(e => { alert('Gagal menghapus'); modal.style.display='none'; })
+            .finally(()=> { confirmBtn.disabled = false; });
+    });
+});
+</script>
 </body>
 </html>
