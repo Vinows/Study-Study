@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #245A95; /* Latar belakang biru khas StudyTrack */
+    color: #000000; /* Hitam pekat */
+    margin: 0;
+}
+
+/* --- WRAPPER & CONTAINER --- */
+.wrap {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    background: #ffffff;
+    padding: 32px; /* Ruang dalam diperbesar agar lebih lega */
+    border-radius: 24px;
+    border: 3px solid #1E293B; /* Garis tepi tegas */
+    box-shadow: 8px 8px 0px #1E293B; /* Bayangan solid Neobrutalism */
+}
+
+/* --- FORM ELEMENTS --- */
+label {
+    font-weight: 900;
+    color: #000000;
+    display: block; /* Agar label pasti berada di atas input */
+    margin-bottom: 8px; /* Jarak antara label dan input */
+    font-size: 1.05rem;
+}
+
+textarea, 
+input[type=number] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 18px;
+    border-radius: 14px; /* Senada dengan lekukan tombol */
+    border: 2px solid #1E293B;
+    background: #F8FAFC;
+    color: #1E293B;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical; /* Mencegah pelebaran ke samping yang merusak layout */
+}
+
+/* Efek interaktif saat kursor disorot */
+textarea:hover, 
+input[type=number]:hover {
+    background: #EADEC9; /* Warna krem halus */
+}
+
+/* Efek saat mulai mengetik (Focus) */
+textarea:focus, 
+input[type=number]:focus {
+    background: #ffffff;
+    box-shadow: 4px 4px 0px #1E293B;
+    transform: translate(-2px, -2px);
+}
+
+/* --- ACTION BUTTONS --- */
+.actions {
+    display: flex;
+    gap: 14px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 2px dashed #CBD5E1; /* Garis pembatas agar terpisah dari form */
+}
+
+.btn-secondary {
+    background: #ffffff;
+    color: #1E293B;
+    padding: 12px 20px;
+    border-radius: 14px;
+    border: 2px solid #1E293B;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 0px #1E293B;
+    transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+    background: #F1F5F9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #1E293B;
+}
+
+.btn-secondary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0px #1E293B;
+}
+
+.btn-primary {
+    background: #FFDE4D; /* Kuning utama */
+    color: #1E293B;
+    padding: 12px 24px;
+    border-radius: 14px;
+    border: 2px solid #1E293B;
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 0px #1E293B;
+    transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+    background: #FFE56C;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #1E293B;
+}
+
+.btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0px #1E293B;
+}

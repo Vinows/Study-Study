@@ -12,14 +12,7 @@ if (!isset($_SESSION['user_id'])) {
     <meta charset="utf-8">
     <title>StudyTrack - Kerjakan Semua Tantangan</title>
     <link rel="stylesheet" href="/css/home.css">
-    <style>
-        body{font-family:Inter, sans-serif;background:#eef2ff;color:#0f172a}
-        .container{max-width:1000px;margin:24px auto;padding:20px}
-        .card{background:#fff;border-radius:12px;padding:18px;margin-bottom:16px}
-        .q-title{font-weight:800;margin-bottom:8px}
-        .mcq-option{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;background:#f8fafc;margin-bottom:8px}
-        .submit-row{text-align:right;margin-top:18px}
-    </style>
+    <link rel="stylesheet" href="/css/take.css">
 </head>
 <body>
 <div class="container">

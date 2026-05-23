@@ -14,40 +14,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyTrack - Buat Tantangan</title>
     <link rel="stylesheet" href="/css/home.css">
-    <style>
-        body { background: #eff6ff; margin: 0; font-family: Inter, sans-serif; color: #0f172a; }
-        .page-layout { display: flex; min-height: 100vh; }
-        .sidebar { width: 280px; background: #0f172a; color: #f8fafc; padding: 32px; }
-        .sidebar .logo { font-size: 2rem; font-weight: 900; margin-bottom: 2rem; }
-        .menu { display: flex; flex-direction: column; gap: 18px; }
-        .menu-item { color: #cbd5e1; text-decoration: none; font-weight: 700; padding: 14px 16px; border-radius: 16px; }
-        .menu-item.active, .menu-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
-        .main { flex: 1; padding: 36px; }
-        .back-link { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px; color: #2563eb; text-decoration: none; font-weight: 700; }
-        .page-title { font-size: 2.4rem; margin: 0 0 8px; }
-        .page-subtitle { color: #475569; margin: 0 0 24px; }
-        .form-card { background: #fff; border-radius: 32px; padding: 34px; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08); }
-        .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .field-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
-        .field-group.full { grid-column: span 2; }
-        .field-group label { font-weight: 700; }
-        .field-group input,
-        .field-group textarea,
-        .field-group select { width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 16px; font-size: 1rem; }
-        .tag-box { display: flex; gap: 14px; flex-wrap: wrap; }
-        .tag-item { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 18px; padding: 18px 20px; cursor: pointer; transition: border-color 0.2s; }
-        .tag-item.active { border-color: #2563eb; background: #eff6ff; }
-        .form-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 18px; }
-        .btn-secondary { border: 1px solid #cbd5e1; background: #fff; color: #334155; padding: 14px 24px; border-radius: 16px; text-decoration: none; font-weight: 700; }
-        .btn-primary { border: none; background: #2563eb; color: #fff; padding: 14px 24px; border-radius: 16px; font-weight: 700; cursor: pointer; }
-        .choice-cards { display: flex; gap: 12px; }
-        .choice-card { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; cursor: pointer; flex: 1; }
-        .choice-card input { display: none; }
-        .choice-card .choice-title { font-weight: 800; }
-        .choice-card .choice-desc { color: #6b7280; font-size: 0.95rem; }
-        .choice-card input:checked + .choice-content { border-color: #2563eb; }
-        .choice-card.selected { border-color: #2563eb; background: #eff6ff; }
-    </style>
+    <link rel="stylesheet" href="/css/chall.css">
 </head>
 <body>
 <div class="page-layout">

@@ -12,17 +12,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nilai Submisi - StudyTrack</title>
     <link rel="stylesheet" href="/css/home.css">
-    <style>
-        body{font-family:Inter, sans-serif;background:#f8fafc;margin:0}
-        .wrap{max-width:900px;margin:40px auto;padding:20px}
-        .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
-        label{font-weight:700}
-        textarea{width:100%;min-height:120px;padding:12px;border-radius:8px;border:1px solid #e5e7eb}
-        input[type=number]{padding:10px;border-radius:8px;border:1px solid #e5e7eb}
-        .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
-        .btn-primary{background:#2563eb;color:#fff;padding:10px 16px;border-radius:8px;border:none}
-        .btn-secondary{background:#fff;border:1px solid #cbd5e1;padding:10px 14px;border-radius:8px}
-    </style>
+    <link rel="stylesheet" href="/css/grade.css">
 </head>
 <body>
     <div class="wrap">

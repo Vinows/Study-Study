@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+body { 
+    background: #245A95; /* Biru pekat StudyTrack */
+    color: #1E293B; 
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+.teacher-dashboard { 
+    display: flex; 
+    min-height: 100vh; 
+}
+
+/* --- MAIN CONTENT --- */
+.main-content { 
+    padding: 40px; 
+    width: 100%; 
+    box-sizing: border-box; 
+    color: #000000; /* Membuat warna teks dasar di area ini menjadi hitam pekat */
+}
+
+/* Memaksa semua judul dan paragraf di dalam main-content menjadi hitam pekat */
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.main-content h4 {
+    font-size: 2.4rem; 
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0; 
+    letter-spacing: -0.02em;
+    text-shadow: 3px 3px 0px #1E293B;
+}
+
+.main-content p {
+    color: #ffffff;
+}
+
+/* --- CARD GRID (KOTAK STATISTIK YANG LEBIH COMPACT) --- */
+.card-grid { 
+    display: grid; 
+    margin-top: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Lebar minimum dikurangi */
+    gap: 20px; /* Jarak antar kotak sedikit dirapatkan */
+}
+
+.card { 
+    border-radius: 20px; /* Lengkungan disesuaikan proporsinya */
+    padding: 24px; /* Padding dikurangi agar tidak terlalu memakan tempat */
+    background: #ffffff; 
+    border: 3px solid #1E293B;
+    box-shadow: 6px 6px 0px #1E293B; /* Bayangan disesuaikan agar tidak terlalu berat */
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Efek pop-out interaktif saat disorot kursor */
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 10px 10px 0px #1E293B; /* Bayangan tetap memanjang saat dihover */
+    background: #FFDE4D; /* Kartu berubah kuning cerah */
+}
+
+.card-title { 
+    font-size: 0.95rem; /* Ukuran font judul dikecilkan sedikit */
+    margin-bottom: 6px; /* Jarak ke angka dirapatkan */
+    font-weight: 800; 
+    color: #475569;
+    text-transform: uppercase; 
+    letter-spacing: 0.05em;
+    transition: color 0.2s ease;
+}
+
+/* Mengubah warna teks judul saat background kartu menjadi kuning */
+.card:hover .card-title {
+    color: #1E293B;
+}
+
+.card-value { 
+    font-size: 2.2rem; /* Ukuran angka dikecilkan signifikan agar pas */
+    font-weight: 900; 
+    color: #000000; 
+    line-height: 1.1;
+    text-shadow: 2px 2px 0px rgba(30, 41, 59, 0.15); /* Bayangan halus pada angka diperkecil */
+}

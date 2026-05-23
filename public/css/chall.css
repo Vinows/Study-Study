@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+body { 
+    background: #245A95; /* Latar belakang biru StudyTrack */
+    margin: 0; 
+    font-family: 'Inter', sans-serif; 
+    color: #1E293B; 
+}
+
+.page-layout { 
+    display: flex; 
+    min-height: 100vh; 
+}
+
+/* --- MAIN CONTENT & HEADER --- */
+.main { 
+    flex: 1; 
+    padding: 40px; 
+}
+
+.back-link { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 20px; 
+    color: #FFDE4D; /* Warna aksen kuning agar kontras di latar biru */
+    text-decoration: none; 
+    font-weight: 900; 
+    font-size: 1.05rem;
+    transition: transform 0.15s ease;
+}
+
+.back-link:hover {
+    transform: translateX(-4px);
+    color: #FFE56C;
+}
+
+.page-title { 
+    font-size: 2.4rem; 
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 8px; 
+    letter-spacing: -0.02em;
+    text-shadow: 3px 3px 0px #1E293B;
+}
+
+.page-subtitle { 
+    color: #E2E8F0; 
+    margin: 0 0 30px; 
+    font-weight: 500;
+}
+
+/* --- KOTAK FORMULIR UTAMA --- */
+.form-card { 
+    background: #ffffff; 
+    border-radius: 24px; 
+    padding: 40px; 
+    border: 3px solid #1E293B;
+    box-shadow: 8px 8px 0px #1E293B; 
+}
+
+/* --- FIELD GROUP (LABEL & INPUT) YANG LEBIH RAPI & PREMIUM --- */
+.field-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; /* Jarak dirapatkan agar label dan input terasa sebagai satu kesatuan */
+    margin-bottom: 24px; /* Jarak antar grup form diperbesar sedikit agar lebih lega */
+}
+
+.field-group.full { 
+    grid-column: span 2; 
+}
+
+.field-group label { 
+    font-weight: 900; 
+    color: #1E293B; /* Menggunakan biru gelap tajam ketimbang hitam pekat agar lebih harmonis */
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    margin-left: 2px; /* Sedikit geser ke kanan agar sejajar sempurna dengan kurva input */
+}
+
+/* --- INPUT, TEXTAREA, SELECT FIELDS --- */
+.field-group input,
+.field-group textarea,
+.field-group select { 
+    width: 100%; 
+    box-sizing: border-box;
+    padding: 16px 20px; /* Area dalam diperbesar agar lebih nyaman diketik dan terlihat mahal */
+    border: 2px solid #1E293B; 
+    border-radius: 14px; /* Sudut melengkung diselaraskan dengan tombol (14px) */
+    font-size: 1rem; 
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    background: #F8FAFC;
+    color: #1E293B;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+/* Mempercantik teks bayangan (Placeholder) jika ada */
+.field-group input::placeholder,
+.field-group textarea::placeholder {
+    color: #94A3B8;
+    font-weight: 500;
+}
+
+/* Menjaga textarea agar hanya bisa ditarik ke bawah, tidak merusak layout ke samping */
+.field-group textarea {
+    resize: vertical;
+    min-height: 120px; /* Tinggi standar yang pas untuk esai/deskripsi */
+}
+
+/* Efek saat kursor diarahkan ke input (sebelum diklik) */
+.field-group input:hover,
+.field-group textarea:hover,
+.field-group select:hover {
+    background: #EADEC9; /* Menggunakan krem aksen secara halus */
+    border-color: #000000;
+}
+
+/* Efek interaktif Neobrutalism saat sedang mengetik (Focus) */
+.field-group input:focus,
+.field-group textarea:focus,
+.field-group select:focus {
+    background: #ffffff;
+    border-color: #1E293B;
+    box-shadow: 4px 4px 0px #1E293B;
+    transform: translate(-2px, -2px);
+}
+
+/* --- TAG ITEMS SELECTION --- */
+.tag-box { 
+    display: flex; 
+    gap: 14px; 
+    flex-wrap: wrap; 
+}
+
+.tag-item { 
+    background: #F1F5F9; 
+    border: 2px solid #1E293B; 
+    border-radius: 12px; 
+    padding: 12px 20px; 
+    cursor: pointer; 
+    font-weight: 800;
+    box-shadow: 0 3px 0px #1E293B;
+    transition: all 0.1s ease; 
+}
+
+.tag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0px #1E293B;
+    background: #EADEC9;
+}
+
+.tag-item.active { 
+    border-color: #1E293B; 
+    background: #FFDE4D; 
+    transform: translateY(0);
+    box-shadow: 0 3px 0px #1E293B;
+}
+
+/* --- RADIO CARD CHOICES (WARNA PENUH SAMPAI BORDER) --- */
+.choice-cards { 
+    display: flex; 
+    gap: 16px; 
+}
+
+.choice-card { 
+    display: flex; 
+    align-items: center; 
+    gap: 14px; 
+    padding: 20px; 
+    border: 2px solid #1E293B; 
+    border-radius: 16px; 
+    background: #F8FAFC; 
+    cursor: pointer; 
+    flex: 1; 
+    box-shadow: 0 4px 0px #1E293B;
+    transition: all 0.15s ease;
+}
+
+.choice-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #1E293B;
+    background: #EADEC9;
+}
+
+.choice-card input { 
+    display: none; 
+}
+
+.choice-card .choice-title { 
+    font-weight: 900; 
+    color: #000000;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.choice-card .choice-desc { 
+    color: #475569; 
+    font-size: 0.95rem; 
+    font-weight: 500;
+}
+
+/* Trik Utama: Mewarnai langsung container utamanya agar full mentok ke border */
+.choice-card.selected,
+.choice-card:has(input:checked) { 
+    border-color: #1E293B; 
+    background: #FFDE4D; /* Warna kuning Neobrutalism memenuhi seluruh kartu */
+}
+
+/* Pastikan elemen konten di dalamnya tidak menimpa dengan warna latar belakang lain */
+.choice-card input:checked + * { 
+    background: transparent !important; 
+}
+/* --- TOMBOL AKSI BAWAH --- */
+.form-actions { 
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center;
+    gap: 16px; 
+    margin-top: 30px; 
+    padding-top: 24px;
+    border-top: 2px dashed #CBD5E1; /* Garis pemisah estetik */
+}
+
+.btn-secondary { 
+    border: 2px solid #1E293B; 
+    background: #ffffff; 
+    color: #1E293B; 
+    padding: 14px 24px; 
+    border-radius: 14px; 
+    text-decoration: none; 
+    font-weight: 800; 
+    box-shadow: 0 4px 0px #1E293B;
+    transition: all 0.1s ease;
+}
+
+.btn-secondary:hover {
+    background: #F1F5F9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #1E293B;
+}
+
+.btn-primary { 
+    border: 2px solid #1E293B; 
+    background: #FFDE4D; 
+    color: #1E293B; 
+    padding: 14px 28px; 
+    border-radius: 14px; 
+    font-weight: 900; 
+    font-size: 1rem;
+    cursor: pointer; 
+    box-shadow: 0 4px 0px #1E293B;
+    transition: all 0.1s ease;
+}
+
+.btn-primary:hover {
+    background: #FFE56C;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #1E293B;
+}
+
+.btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0px #1E293B;
+}

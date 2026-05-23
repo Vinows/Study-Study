@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+body { 
+    font-family: 'Inter', sans-serif; 
+    background: #245A95; /* Latar biru khas StudyTrack */
+    color: #1E293B; 
+    margin: 0; 
+}
+
+.page { 
+    display: flex; 
+    min-height: 100vh; 
+}
+
+/* --- SIDEBAR --- */
+.sidebar { 
+    width: 300px; 
+    background: #ffffff; 
+    color: #1E293B; 
+    padding: 40px 20px; 
+    border-right: 3px solid #1E293B; /* Garis pembatas tegas */
+    box-sizing: border-box;
+}
+
+/* --- MAIN CONTENT --- */
+.main { 
+    flex: 1; 
+    padding: 40px; 
+    color: #000000; /* Hitam pekat sesuai permintaan sebelumnya */
+    box-sizing: border-box;
+}
+
+/* Memastikan semua teks dasar di dalam main bernilai hitam pekat */
+.main h1, .main h2, .main h3, .main h4 {
+    font-size: 2.4rem; 
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0; 
+    letter-spacing: -0.02em;
+    text-shadow: 3px 3px 0px #1E293B;
+}
+
+.main p {
+    color: #ffffff;
+}
+
+/* --- KARTU (CARD) --- */
+.card { 
+    background: #ffffff; 
+    border-radius: 20px; 
+    padding: 24px; 
+    border: 3px solid #1E293B;
+    box-shadow: 6px 6px 0px #1E293B; /* Bayangan solid Neobrutalism */
+    margin-top: 20px;
+    margin-bottom: 20px; 
+    transition: all 0.2s ease;
+}
+
+/* Efek angkat saat kartu disorot */
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 10px 10px 0px #1E293B;
+}
+
+/* --- METADATA --- */
+.meta { 
+    display: flex; 
+    gap: 12px; 
+    align-items: center; 
+}
+
+/* --- BADGE (Dengan nuansa hijau/sukses yang dipertahankan tapi gaya brutalist) --- */
+.badge { 
+    padding: 6px 12px; 
+    border-radius: 10px; /* Sedikit melengkung tapi tidak full bulat */
+    background: #A7F3D0; /* Hijau cerah pastel */
+    color: #064E3B; /* Hijau gelap kontras */
+    font-weight: 800; 
+    font-size: 0.85rem;
+    border: 2px solid #1E293B;
+}
+
+/* --- TOMBOL (BTN) --- */
+.btn { 
+    padding: 10px 18px; 
+    border-radius: 12px; 
+    border: 2px solid #1E293B; 
+    background: #FFDE4D; /* Aksen kuning utama */
+    color: #1E293B;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800; 
+    font-size: 0.95rem;
+    cursor: pointer; 
+    box-shadow: 0 4px 0px #1E293B;
+    transition: all 0.15s ease;
+}
+
+.btn:hover { 
+    background: #FFE56C;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #1E293B;
+}
+
+.btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0px #1E293B;
+}
