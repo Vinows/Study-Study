@@ -150,27 +150,64 @@ class TeacherController {
         $this->guardTeacher();
         require '../app/config/db.php';
         $challenge_id = intval($id);
+        // Remove attachments for submissions belonging to this challenge
+        $publicPath = __DIR__ . '/../../public';
+        $subRes = $conn->query("SELECT attachment FROM submissions WHERE challenge_id = $challenge_id");
+        if ($subRes) {
+            while ($s = $subRes->fetch_assoc()) {
+                if (!empty($s['attachment'])) {
+                    $filePath = $publicPath . $s['attachment'];
+                    if (file_exists($filePath)) @unlink($filePath);
+                }
+            }
+        }
 
-        // Fetch challenge to get attachment path (if any)
+        // Remove challenge attachment
         $res = $conn->query("SELECT attachment FROM challenges WHERE id = $challenge_id");
         if ($res && $res->num_rows > 0) {
             $row = $res->fetch_assoc();
             $attachment = $row['attachment'] ?? null;
             if (!empty($attachment)) {
-                // Convert web path to filesystem path
-                $publicPath = __DIR__ . '/../../public';
                 $filePath = $publicPath . $attachment;
-                if (file_exists($filePath)) {
-                    @unlink($filePath);
-                }
+                if (file_exists($filePath)) @unlink($filePath);
             }
         }
 
-        $conn->query("DELETE FROM challenges WHERE id = $challenge_id");
+        // Delete dependent rows first to avoid FK issues
+        $err = null;
+        if (! $conn->query("DELETE FROM submissions WHERE challenge_id = $challenge_id")) {
+            $err = $conn->error;
+        }
+        if (! $conn->query("DELETE FROM user_challenges WHERE challenge_id = $challenge_id")) {
+            $err = $err ?: $conn->error;
+        }
+
+        if (is_null($err)) {
+            if (! $conn->query("DELETE FROM challenges WHERE id = $challenge_id")) {
+                $err = $conn->error;
+            }
+        }
+
+        // Log the delete attempt for debugging
+        $logEntry = date('c') . " | delete_challenge id=$challenge_id | err=" . ($err ?: 'none') . "\n";
+        @file_put_contents(__DIR__ . '/../../storage/delete_challenge.log', $logEntry, FILE_APPEND | LOCK_EX);
+
+        // If deletion failed, fall back to soft-hide the challenge so it no longer appears
+        if ($err) {
+            // attempt to mark the challenge inactive so it is hidden from lists
+            @file_put_contents(__DIR__ . '/../../storage/delete_challenge.log', date('c') . " | delete_failed id=$challenge_id | err=" . ($err ?: 'unknown') . "\n", FILE_APPEND | LOCK_EX);
+            $safe = $conn->real_escape_string('inactive');
+            $conn->query("UPDATE challenges SET status='$safe' WHERE id = $challenge_id");
+        }
+
         // If request is AJAX, return JSON; otherwise redirect
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
             header('Content-Type: application/json');
-            echo json_encode(['status' => 'ok']);
+            if ($err) {
+                echo json_encode(['status' => 'ok', 'note' => 'soft-hidden', 'challenge_id' => $challenge_id]);
+            } else {
+                echo json_encode(['status' => 'ok']);
+            }
             return;
         }
 

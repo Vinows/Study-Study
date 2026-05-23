@@ -16,20 +16,18 @@ if (($_SESSION['role'] ?? 'student') === 'teacher') {
 
 $user_id = $_SESSION['user_id'];
 
-$history_data = [];
-for ($w = 1; $w < $current_week; $w++) {
-    $t_query = $conn->query("SELECT COUNT(*) as count FROM challenges WHERE week_number = $w");
-    $total = $t_query->fetch_assoc()['count'];
+$history_by_week = [];
+// Get latest submission per challenge for this user
+$subLatest = "SELECT sub.challenge_id, sub.grade, sub.feedback, sub.graded_at FROM submissions sub JOIN (SELECT challenge_id, MAX(id) AS max_id FROM submissions WHERE user_id = $user_id GROUP BY challenge_id) m ON sub.challenge_id = m.challenge_id AND sub.id = m.max_id";
 
-    $c_query = $conn->query("
-        SELECT COUNT(*) as count FROM user_challenges uc 
-        JOIN challenges c ON uc.challenge_id = c.id 
-        WHERE c.week_number = $w AND uc.user_id = $user_id AND uc.status = 'completed'
-    ");
-    $completed = $c_query->fetch_assoc()['count'];
-
-    $pct = ($total > 0) ? round(($completed / $total) * 100) : 0;
-    $history_data[$w] = $pct;
+$histQuery = "SELECT c.*, uc.status, sl.grade, sl.feedback, sl.graded_at FROM challenges c JOIN user_challenges uc ON c.id = uc.challenge_id AND uc.user_id = $user_id AND uc.status = 'completed' LEFT JOIN ($subLatest) sl ON sl.challenge_id = c.id ORDER BY c.week_number DESC, sl.graded_at DESC";
+$res = $conn->query($histQuery);
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $wk = intval($row['week_number']);
+        if (!isset($history_by_week[$wk])) $history_by_week[$wk] = [];
+        $history_by_week[$wk][] = $row;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -64,19 +62,33 @@ for ($w = 1; $w < $current_week; $w++) {
         <h2 class="section-title">History Progress</h2>
         <div class="history-list">
             
-            <?php if(empty($history_data)): ?>
-                <p style="color:white; font-size: 1.2rem;">Belum ada history karena ini masih minggu pertama.</p>
+            <?php if(empty($history_by_week)): ?>
+                <p style="color:white; font-size: 1.2rem;">Belum ada history yang sudah dinilai.</p>
             <?php else: ?>
-                <?php foreach($history_data as $minggu => $persentase): ?>
-                <div class="history-card">
-                    <div class="history-info">
-                        <label>Progress Minggu <?= $minggu ?></label>
-                        <div class="progress-mini-outline">
-                            <div class="progress-mini-fill" style="width: <?= $persentase ?>%;"></div>
+                <?php foreach($history_by_week as $minggu => $items): ?>
+                    <h3 style="color:#fff;margin-bottom:8px">Minggu <?= $minggu ?></h3>
+                    <?php foreach($items as $it): ?>
+                        <div class="history-card">
+                            <div style="max-width:80%">
+                                <div style="font-weight:800; font-size:1.05rem"><?= htmlspecialchars($it['title']) ?></div>
+                                <div style="color:#64748b; margin-top:6px"><?= htmlspecialchars($it['description']) ?></div>
+                                <?php if (!empty($it['grade']) || !empty($it['feedback'])): ?>
+                                    <div style="margin-top:10px; background:#f8fafc; padding:12px; border-radius:8px; color:#334155">
+                                        <?php if (!empty($it['grade'])): ?>
+                                            <div><strong>Nilai:</strong> <?= intval($it['grade']) ?>%</div>
+                                        <?php endif; ?>
+                                        <?php if (!empty($it['feedback'])): ?>
+                                            <div style="margin-top:6px"><strong>Feedback:</strong> <?= nl2br(htmlspecialchars($it['feedback'])) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div style="text-align:right">
+                                <div style="font-weight:700">Selesai</div>
+                                <div style="color:#64748b;margin-top:8px">Dinilai: <?= $it['graded_at'] ? date('d M Y', strtotime($it['graded_at'])) : '-' ?></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="arrow-icon">❯</div>
-                </div>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
             <?php endif; ?>
 

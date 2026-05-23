@@ -76,34 +76,41 @@ if ($sub_q) while ($r = $sub_q->fetch_assoc()) $submissions[] = $r;
         </div>
         
         <div style="margin-top:28px">
-            <h2 style="margin:0 0 12px">Penilaian & Feedback</h2>
-            <?php if (empty($submissions)): ?>
-                <div class="card" style="padding:18px;border-radius:12px;background:#fff">Belum ada submisi atau belum dinilai.</div>
-            <?php else: ?>
-                <?php foreach ($submissions as $s): ?>
-                    <div class="card" style="background:#fff;padding:18px;border-radius:12px;margin-bottom:12px;box-shadow:0 10px 30px rgba(2,6,23,0.06)">
-                        <div style="display:flex;justify-content:space-between;align-items:center">
-                            <div>
-                                <strong><?= htmlspecialchars($s['challenge_title']) ?></strong>
-                                <div style="color:#64748b;font-size:0.95rem">Dikirim: <?= date('d M Y H:i', strtotime($s['created_at'])) ?></div>
-                            </div>
-                            <div style="text-align:right">
-                                <div style="font-weight:800;color:#334155">Status: <?= $s['status'] === 'graded' ? 'Dinilai' : 'Menunggu' ?></div>
-                                <?php if ($s['status'] === 'graded'): ?>
-                                    <div style="margin-top:6px;font-weight:800;color:#0b5">Nilai: <?= intval($s['grade']) ?></div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div style="margin-top:12px;color:#475569">Jawaban: <?= nl2br(htmlspecialchars($s['answer_text'])) ?></div>
-                        <?php if (!empty($s['attachment'])): ?>
-                            <div style="margin-top:8px"><a href="<?= htmlspecialchars($s['attachment']) ?>" target="_blank">Lihat lampiran</a></div>
-                        <?php endif; ?>
-                        <?php if (!empty($s['feedback'])): ?>
-                            <div style="margin-top:12px;background:#f8fafc;padding:12px;border-radius:8px;color:#334155">Feedback: <?= nl2br(htmlspecialchars($s['feedback'])) ?></div>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            <h2 style="margin:0 0 12px">Per-Challenge Progress</h2>
+            <?php
+            // Fetch challenges for the week with user's status and latest submission grade
+            $subLatest = "SELECT sub.challenge_id, sub.grade FROM submissions sub JOIN (SELECT challenge_id, MAX(id) AS max_id FROM submissions WHERE user_id = $user_id GROUP BY challenge_id) m ON sub.challenge_id = m.challenge_id AND sub.id = m.max_id";
+            $chQuery = "SELECT c.*, COALESCE(uc.status, 'pending') AS uc_status, sl.grade AS submission_grade FROM challenges c LEFT JOIN user_challenges uc ON c.id = uc.challenge_id AND uc.user_id = $user_id LEFT JOIN ($subLatest) sl ON sl.challenge_id = c.id WHERE c.week_number = $current_week ORDER BY c.id ASC";
+            $chRes = $conn->query($chQuery);
+            if (!$chRes || $chRes->num_rows === 0) {
+                echo '<div class="card" style="padding:18px;border-radius:12px;background:#fff">Belum ada tantangan untuk minggu ini.</div>';
+            } else {
+                echo '<div class="challenge-progress-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">';
+                while ($ch = $chRes->fetch_assoc()) {
+                    $completed = ($ch['uc_status'] === 'completed');
+                    $gradeVal = isset($ch['submission_grade']) ? intval($ch['submission_grade']) : null;
+                    $barPct = 0;
+                    if ($gradeVal !== null) {
+                        $barPct = max(0, min(100, $gradeVal));
+                    } elseif ($completed) {
+                        $barPct = 100;
+                    }
+                    $barColor = $barPct >= 100 ? '#10b981' : ($barPct > 0 ? '#f59e0b' : '#e2e8f0');
+                    echo '<div class="card" style="background:#fff;padding:16px;border-radius:12px;box-shadow:0 8px 24px rgba(2,6,23,0.06)">';
+                    echo '<div style="font-weight:800;margin-bottom:8px">' . htmlspecialchars($ch['title']) . '</div>';
+                    echo '<div style="font-size:0.9rem;color:#64748b;margin-bottom:10px">' . htmlspecialchars(substr($ch['description'],0,120)) . '</div>';
+                    echo '<div style="background:#f1f5f9;border-radius:12px;padding:8px">';
+                    echo '<div style="height:12px;background:#e6eef8;border-radius:8px;overflow:hidden;">';
+                    echo '<div style="width:' . $barPct . '%;height:100%;background:' . $barColor . ';transition:width:300ms"></div>';
+                    echo '</div>';
+                    echo '<div style="display:flex;justify-content:space-between;margin-top:8px;font-weight:700;color:#334155">';
+                    echo '<div>' . ($barPct >= 100 ? 'Selesai' : ($barPct > 0 ? 'Dalam Penilaian' : 'Belum Selesai')) . '</div>';
+                    echo '<div>' . ($gradeVal !== null ? ($gradeVal . '%') : ($barPct >= 100 ? '100%' : '0%')) . '</div>';
+                    echo '</div></div></div>';
+                }
+                echo '</div>';
+            }
+            ?>
         </div>
     </main>
 </div>

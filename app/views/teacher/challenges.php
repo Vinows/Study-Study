@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
 }
 
 $teacher_name = $_SESSION['user_name'] ?? 'Guru';
-$result = $conn->query("SELECT * FROM challenges ORDER BY id DESC");
+$result = $conn->query("SELECT * FROM challenges WHERE status IS NULL OR status = 'active' ORDER BY id DESC");
 $challenges = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
@@ -111,6 +111,7 @@ if ($result) {
                         <div class="meta-item">Tenggat: <?= $challenge['due_date'] ? date('d M Y', strtotime($challenge['due_date'])) : 'Belum ditentukan' ?></div>
                     </div>
                     <div class="action-bar">
+                        <a href="/teacher/challenges/<?= $challenge['id'] ?>/submissions" class="action-button">Lihat Submisi</a>
                         <a href="/teacher/challenges/<?= $challenge['id'] ?>/edit" class="action-button">Edit</a>
                         <button type="button" class="action-button delete js-delete" data-id="<?= $challenge['id'] ?>" data-title="<?= htmlspecialchars($challenge['title'], ENT_QUOTES) ?>">Hapus</button>
                     </div>
@@ -140,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const confirmBtn = document.getElementById('confirmDelete');
     const cancelBtn = document.getElementById('cancelDelete');
     let deleteUrl = null;
+    let deleteId = null;
 
     document.querySelectorAll('.js-delete').forEach(btn => {
         btn.addEventListener('click', function(){
@@ -147,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function(){
             const title = this.getAttribute('data-title') || 'tantangan';
             delMsg.textContent = `Yakin ingin menghapus "${title}"? Tindakan ini tidak dapat dibatalkan.`;
             deleteUrl = `/teacher/challenges/${id}/delete`;
+            deleteId = id;
             modal.style.display = 'flex';
         });
     });
@@ -156,10 +159,35 @@ document.addEventListener('DOMContentLoaded', function(){
     confirmBtn.addEventListener('click', () => {
         if (!deleteUrl) return;
         confirmBtn.disabled = true;
-        fetch(deleteUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(r => r.json())
-            .then(data => { if (data.status === 'ok') window.location.reload(); else { alert('Gagal menghapus'); modal.style.display='none'; } })
-            .catch(e => { alert('Gagal menghapus'); modal.style.display='none'; })
+        fetch(deleteUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+            .then(r => {
+                if (!r.ok) return r.text().then(t => { throw new Error(t || 'Gagal menghapus'); });
+                return r.json();
+            })
+            .then(data => {
+                if (data && data.status === 'ok') {
+                    // remove the corresponding card from DOM
+                    try {
+                        const btn = document.querySelector('.js-delete[data-id="' + deleteId + '"]');
+                        const card = btn ? btn.closest('.challenge-card') : null;
+                        if (card) {
+                            card.style.transition = 'opacity 240ms, transform 240ms';
+                            card.style.opacity = 0;
+                            card.style.transform = 'scale(0.98)';
+                            setTimeout(() => card.remove(), 260);
+                        }
+                    } catch (e) {
+                        // fallback to reload if DOM removal fails
+                        window.location.reload();
+                    }
+                    modal.style.display = 'none';
+                    deleteUrl = null; deleteId = null;
+                } else {
+                    alert(data && data.message ? data.message : 'Gagal menghapus');
+                    modal.style.display='none';
+                }
+            })
+            .catch(e => { alert('Gagal menghapus: ' + (e.message || e)); modal.style.display='none'; })
             .finally(()=> { confirmBtn.disabled = false; });
     });
 });

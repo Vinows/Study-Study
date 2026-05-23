@@ -24,9 +24,9 @@ if (isset($_POST['complete_challenge'])) {
 }
 
 $query = "SELECT c.*, uc.status 
-        FROM challenges c 
-        LEFT JOIN user_challenges uc ON c.id = uc.challenge_id AND uc.user_id = $user_id 
-        WHERE c.week_number = $current_week";
+    FROM challenges c 
+    LEFT JOIN user_challenges uc ON c.id = uc.challenge_id AND uc.user_id = $user_id 
+    WHERE c.week_number = $current_week AND (uc.status IS NULL OR uc.status != 'completed')";
 $result = $conn->query($query);
 ?>
 
@@ -112,9 +112,9 @@ $result = $conn->query($query);
                             <button class="btn-done" disabled>Sudah Selesai ✓</button>
                         <?php else: ?>
                             <?php if ($row['challenge_type'] === 'Tugas'): ?>
-                                <form action="/challenge/submit" method="POST" enctype="multipart/form-data">
+                                <form class="challenge-submit" action="/challenge/submit" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" name="challenge_id" value="<?= $row['id'] ?>">
-                                    <div style="margin:12px 0;">
+                                    <div style="margin:12px 0;"> 
                                         <textarea name="answer_text" placeholder="Tulis jawaban singkat atau instruksi pengumpulan..." rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb"></textarea>
                                     </div>
                                     <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
@@ -134,5 +134,35 @@ $result = $conn->query($query);
             </div>
         </main>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('form.challenge-submit').forEach(function(form){
+            form.addEventListener('submit', async function(e){
+                e.preventDefault();
+                var card = form.closest('.challenge-card');
+                var fd = new FormData(form);
+                try {
+                    var res = await fetch(form.action, {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    var data = await res.json();
+                    if (data && data.success) {
+                        card.style.transition = 'opacity 300ms, height 300ms';
+                        card.style.opacity = 0;
+                        setTimeout(function(){ if(card) card.remove(); }, 320);
+                    } else {
+                        alert('Gagal mengirim jawaban. Silakan coba lagi.');
+                    }
+                } catch (err) {
+                    alert('Terjadi kesalahan saat mengirim jawaban.');
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

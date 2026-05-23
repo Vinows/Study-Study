@@ -40,10 +40,50 @@ class StudentController {
         $attachment_sql = $attachment_path ? "'" . $conn->real_escape_string($attachment_path) . "'" : 'NULL';
         $answer_sql = $conn->real_escape_string($answer_text);
 
-        $conn->query("INSERT INTO submissions (user_id, challenge_id, answer_text, attachment) VALUES ($user_id, $challenge_id, '$answer_sql', $attachment_sql)");
+        // If the schema uses `student_id` (older installs), populate it as well to avoid missing-not-default errors
+        $checkStudentCol = $conn->query("SHOW COLUMNS FROM submissions LIKE 'student_id'");
+        if ($checkStudentCol && $checkStudentCol->num_rows > 0) {
+            $conn->query("INSERT INTO submissions (user_id, student_id, challenge_id, answer_text, attachment) VALUES ($user_id, $user_id, $challenge_id, '$answer_sql', $attachment_sql)");
+        } else {
+            $conn->query("INSERT INTO submissions (user_id, challenge_id, answer_text, attachment) VALUES ($user_id, $challenge_id, '$answer_sql', $attachment_sql)");
+        }
 
-        // mark user_challenges as pending (insert or update)
-        $conn->query("INSERT INTO user_challenges (user_id, challenge_id, status) VALUES ($user_id, $challenge_id, 'pending') ON DUPLICATE KEY UPDATE status='pending'");
+        // mark user_challenges with a valid status value (detect enum values to avoid truncation)
+        // For UX: mark as 'completed' so submitted challenges disappear from the main list immediately
+        $statusToSet = 'completed';
+        $col = $conn->query("SHOW COLUMNS FROM user_challenges LIKE 'status'");
+        if ($col && $col->num_rows > 0) {
+            $c = $col->fetch_assoc();
+            if (isset($c['Type'])) {
+                // Parse enum(...) safely. Example: enum('pending','completed')
+                if (preg_match("/^enum\\((.*)\\)$/", $c['Type'], $m)) {
+                    $inside = $m[1]; // "'pending','completed'"
+                    $inside = trim($inside);
+                    $inside = trim($inside, "'\"");
+                    $opts = explode("','", $inside);
+                    $default = $c['Default'] ?? null;
+                    if (!empty($opts)) {
+                        if (!in_array($statusToSet, $opts)) {
+                            $statusToSet = $default ? $default : $opts[0];
+                        }
+                    } elseif ($default) {
+                        $statusToSet = $default;
+                    }
+                } elseif (!empty($c['Default'])) {
+                    $statusToSet = $c['Default'];
+                }
+            }
+        }
+        $statusEsc = $conn->real_escape_string($statusToSet);
+        $conn->query("INSERT INTO user_challenges (user_id, challenge_id, status) VALUES ($user_id, $challenge_id, '$statusEsc') ON DUPLICATE KEY UPDATE status='$statusEsc'");
+
+        // If request was AJAX, return JSON so frontend can remove the card without a full redirect
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'challenge_id' => $challenge_id]);
+            exit;
+        }
 
         header('Location: /challenge');
         exit;

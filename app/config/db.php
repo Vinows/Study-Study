@@ -84,6 +84,30 @@ foreach ($fieldsToAdd as $field => $sql) {
     }
 }
 
+// Ensure submissions table has attachment column (in case it was created earlier without it)
+$checkSubAttach = $conn->query("SHOW COLUMNS FROM submissions LIKE 'attachment'");
+if (!($checkSubAttach && $checkSubAttach->num_rows > 0)) {
+    $conn->query("ALTER TABLE submissions ADD COLUMN attachment VARCHAR(255) NULL");
+}
+
+// Ensure submissions has grade, feedback, status, graded_at columns
+$checkGrade = $conn->query("SHOW COLUMNS FROM submissions LIKE 'grade'");
+if (!($checkGrade && $checkGrade->num_rows > 0)) {
+    $conn->query("ALTER TABLE submissions ADD COLUMN grade INT NULL");
+}
+$checkFeedback = $conn->query("SHOW COLUMNS FROM submissions LIKE 'feedback'");
+if (!($checkFeedback && $checkFeedback->num_rows > 0)) {
+    $conn->query("ALTER TABLE submissions ADD COLUMN feedback TEXT NULL");
+}
+$checkStatus = $conn->query("SHOW COLUMNS FROM submissions LIKE 'status'");
+if (!($checkStatus && $checkStatus->num_rows > 0)) {
+    $conn->query("ALTER TABLE submissions ADD COLUMN status ENUM('pending','graded') NOT NULL DEFAULT 'pending'");
+}
+$checkGradedAt = $conn->query("SHOW COLUMNS FROM submissions LIKE 'graded_at'");
+if (!($checkGradedAt && $checkGradedAt->num_rows > 0)) {
+    $conn->query("ALTER TABLE submissions ADD COLUMN graded_at DATETIME NULL");
+}
+
 $defaultTeacher = $conn->query("SELECT id FROM users WHERE email = 'teacher@studytrack.local'")->num_rows;
 if (! $defaultTeacher) {
     $password = password_hash('teacher123', PASSWORD_DEFAULT);
