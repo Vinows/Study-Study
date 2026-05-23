@@ -98,6 +98,17 @@ class StudentController {
         require '../app/config/db.php';
         $user_id = intval($_SESSION['user_id']);
 
+        $checkSubmissionDate = $conn->query("SHOW COLUMNS FROM submissions LIKE 'submission_date'");
+        $hasSubmissionDateCol = $checkSubmissionDate && $checkSubmissionDate->num_rows > 0;
+        $submissionBaseTime = time();
+        $submissionOffset = 0;
+        $getSubmissionDate = function() use ($hasSubmissionDateCol, &$submissionOffset, $submissionBaseTime) {
+            if (! $hasSubmissionDateCol) {
+                return 'NULL';
+            }
+            return "'" . date('Y-m-d H:i:s', $submissionBaseTime + $submissionOffset++) . "'";
+        };
+
         // Prefer per-question submission when available
         $question_ids = $_POST['question_ids'] ?? [];
         if (!is_array($question_ids)) $question_ids = [];
@@ -134,11 +145,20 @@ class StudentController {
                 $qrow = $qres->fetch_assoc();
                 $cid = intval($qrow['challenge_id']);
 
+                $submissionDate = $getSubmissionDate();
                 $checkStudentCol = $conn->query("SHOW COLUMNS FROM submissions LIKE 'student_id'");
                 if ($checkStudentCol && $checkStudentCol->num_rows > 0) {
-                    $conn->query("INSERT INTO submissions (user_id, student_id, challenge_id, answer_text, attachment) VALUES ($user_id, $user_id, $cid, '$answer_sql', $attachment_sql)");
+                    try {
+                        $conn->query("INSERT INTO submissions (user_id, student_id, challenge_id, answer_text, attachment" . ($hasSubmissionDateCol ? ", submission_date" : "") . ") VALUES ($user_id, $user_id, $cid, '$answer_sql', $attachment_sql" . ($hasSubmissionDateCol ? ", $submissionDate" : "") . ")");
+                    } catch (\mysqli_sql_exception $e) {
+                        continue;
+                    }
                 } else {
-                    $conn->query("INSERT INTO submissions (user_id, challenge_id, answer_text, attachment) VALUES ($user_id, $cid, '$answer_sql', $attachment_sql)");
+                    try {
+                        $conn->query("INSERT INTO submissions (user_id, challenge_id, answer_text, attachment" . ($hasSubmissionDateCol ? ", submission_date" : "") . ") VALUES ($user_id, $cid, '$answer_sql', $attachment_sql" . ($hasSubmissionDateCol ? ", $submissionDate" : "") . ")");
+                    } catch (\mysqli_sql_exception $e) {
+                        continue;
+                    }
                 }
 
                 // mark user_challenges as completed for the related challenge
@@ -187,11 +207,20 @@ class StudentController {
                 $attachment_sql = $attachment_path ? "'" . $conn->real_escape_string($attachment_path) . "'" : 'NULL';
                 $answer_sql = $conn->real_escape_string($answer_text);
 
+                $submissionDate = $getSubmissionDate();
                 $checkStudentCol = $conn->query("SHOW COLUMNS FROM submissions LIKE 'student_id'");
                 if ($checkStudentCol && $checkStudentCol->num_rows > 0) {
-                    $conn->query("INSERT INTO submissions (user_id, student_id, challenge_id, answer_text, attachment) VALUES ($user_id, $user_id, $cid, '$answer_sql', $attachment_sql)");
+                    try {
+                        $conn->query("INSERT INTO submissions (user_id, student_id, challenge_id, answer_text, attachment" . ($hasSubmissionDateCol ? ", submission_date" : "") . ") VALUES ($user_id, $user_id, $cid, '$answer_sql', $attachment_sql" . ($hasSubmissionDateCol ? ", $submissionDate" : "") . ")");
+                    } catch (\mysqli_sql_exception $e) {
+                        continue;
+                    }
                 } else {
-                    $conn->query("INSERT INTO submissions (user_id, challenge_id, answer_text, attachment) VALUES ($user_id, $cid, '$answer_sql', $attachment_sql)");
+                    try {
+                        $conn->query("INSERT INTO submissions (user_id, challenge_id, answer_text, attachment" . ($hasSubmissionDateCol ? ", submission_date" : "") . ") VALUES ($user_id, $cid, '$answer_sql', $attachment_sql" . ($hasSubmissionDateCol ? ", $submissionDate" : "") . ")");
+                    } catch (\mysqli_sql_exception $e) {
+                        continue;
+                    }
                 }
 
                 // mark user_challenges as completed (same behaviour as single submit)

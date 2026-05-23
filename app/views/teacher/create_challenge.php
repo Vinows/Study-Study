@@ -104,35 +104,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                         </div>
                     </div>
                     <div class="field-group">
-                        <label for="answer_type">Format Jawaban</label>
-                        <div class="choice-cards">
-                            <label class="choice-card answer-choice">
-                                <input type="radio" name="answer_type" value="essay" checked>
-                                <div class="choice-content">
-                                    <div class="choice-title">Essay</div>
-                                    <div class="choice-desc">Siswa menulis jawaban terbuka</div>
-                                </div>
-                            </label>
-                            <label class="choice-card answer-choice">
-                                <input type="radio" name="answer_type" value="multiple_choice">
-                                <div class="choice-content">
-                                    <div class="choice-title">Pilihan Ganda</div>
-                                    <div class="choice-desc">Siswa memilih jawaban yang benar</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="field-group full" id="mcq-options" style="display:none;">
-                        <label>Opsi Pilihan Ganda</label>
-                        <div style="display:grid;gap:12px;">
-                            <input type="text" name="options[]" placeholder="Pilihan 1">
-                            <input type="text" name="options[]" placeholder="Pilihan 2">
-                            <input type="text" name="options[]" placeholder="Pilihan 3">
-                            <input type="text" name="options[]" placeholder="Pilihan 4">
-                        </div>
-                        <small style="color:#64748b;">Masukkan setidaknya dua opsi jika memilih Pilihan Ganda.</small>
-                    </div>
-                    <div class="field-group">
                         <label for="week_number">Tingkat/Kelas</label>
                         <input type="number" id="week_number" name="week_number" placeholder="Contoh: 1" min="1" value="1" required>
                     </div>
@@ -170,18 +141,6 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const mcqSection = document.getElementById('mcq-options');
-    const answerRadios = document.querySelectorAll('input[name="answer_type"]');
-    function updateMcqSection() {
-        const selected = document.querySelector('input[name="answer_type"]:checked');
-        if (selected && selected.value === 'multiple_choice') {
-            mcqSection.style.display = 'block';
-        } else {
-            mcqSection.style.display = 'none';
-        }
-    }
-    answerRadios.forEach(radio => radio.addEventListener('change', updateMcqSection));
-    updateMcqSection();
     // Questions dynamic list
     const qContainer = document.getElementById('questions-container');
     let qIndex = 0;
