@@ -84,22 +84,8 @@ class TeacherController {
             }
             $options_sql = !empty($options) ? "'" . $conn->real_escape_string(json_encode($options, JSON_UNESCAPED_UNICODE)) . "'" : 'NULL';
 
-            // handle optional attachment
+            // Attachments are disabled: teachers cannot upload files.
             $attachment_sql = 'NULL';
-            if (!empty($_FILES['attachment']['name'])) {
-                $tmp = $_FILES['attachment']['tmp_name'];
-                $orig = basename($_FILES['attachment']['name']);
-                $ext = pathinfo($orig, PATHINFO_EXTENSION);
-                $allowed = ['pdf','doc','docx','ppt','pptx','jpg','jpeg','png'];
-                if (in_array(strtolower($ext), $allowed) && $_FILES['attachment']['size'] <= 10 * 1024 * 1024) {
-                    $newName = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-                    $uploadDir = __DIR__ . '/../../public/uploads/challenges';
-                    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-                    if (move_uploaded_file($tmp, $uploadDir . '/' . $newName)) {
-                        $attachment_sql = "'" . $conn->real_escape_string('/uploads/challenges/' . $newName) . "'";
-                    }
-                }
-            }
 
             $due_date_sql = $due_date !== '' ? "'$due_date'" : 'NULL';
             $conn->query("INSERT INTO challenges (title, description, category, week_number, due_date, points, challenge_type, answer_type, options, attachment) VALUES ('$title', '$description', '$category', $week_number, $due_date_sql, $points, '$challenge_type', '$answer_type', $options_sql, $attachment_sql)");
@@ -124,6 +110,7 @@ class TeacherController {
                     $conn->query("INSERT INTO questions (challenge_id, question_text, answer_type, options, position) VALUES ($challenge_id, '" . $conn->real_escape_string($qText) . "', '$qType', $qOptionsSql, $pos)");
                 }
             }
+
             header('Location: /teacher/challenges');
             exit;
         }
@@ -170,21 +157,8 @@ class TeacherController {
             $options_sql = !empty($options) ? "'" . $conn->real_escape_string(json_encode($options, JSON_UNESCAPED_UNICODE)) . "'" : 'NULL';
             $due_date_sql = $due_date !== '' ? "'$due_date'" : 'NULL';
 
+            // Attachments are disabled: teachers cannot upload files.
             $attachment_sql = '';
-            if (!empty($_FILES['attachment']['name'])) {
-                $tmp = $_FILES['attachment']['tmp_name'];
-                $orig = basename($_FILES['attachment']['name']);
-                $ext = pathinfo($orig, PATHINFO_EXTENSION);
-                $allowed = ['pdf','doc','docx','ppt','pptx','jpg','jpeg','png'];
-                if (in_array(strtolower($ext), $allowed) && $_FILES['attachment']['size'] <= 10 * 1024 * 1024) {
-                    $newName = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-                    $uploadDir = __DIR__ . '/../../public/uploads/challenges';
-                    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-                    if (move_uploaded_file($tmp, $uploadDir . '/' . $newName)) {
-                        $attachment_sql = ", attachment='" . $conn->real_escape_string('/uploads/challenges/' . $newName) . "'";
-                    }
-                }
-            }
 
             $conn->query("UPDATE challenges SET title='$title', description='$description', category='$category', week_number=$week_number, due_date=$due_date_sql, points=$points, challenge_type='$challenge_type', answer_type='$answer_type', options=$options_sql $attachment_sql WHERE id = $challenge_id");
 

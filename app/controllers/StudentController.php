@@ -21,23 +21,8 @@ class StudentController {
         $challenge_id = intval($_POST['challenge_id'] ?? 0);
         $answer_text = $conn->real_escape_string(trim($_POST['answer_text'] ?? ''));
 
-        $attachment_path = null;
-        if (!empty($_FILES['attachment']['name'])) {
-            $tmp = $_FILES['attachment']['tmp_name'];
-            $orig = basename($_FILES['attachment']['name']);
-            $ext = pathinfo($orig, PATHINFO_EXTENSION);
-            $allowed = ['pdf','doc','docx','ppt','pptx','jpg','jpeg','png'];
-            if (in_array(strtolower($ext), $allowed) && $_FILES['attachment']['size'] <= 10 * 1024 * 1024) {
-                $newName = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-                $uploadDir = __DIR__ . '/../../public/uploads/submissions';
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-                if (move_uploaded_file($tmp, $uploadDir . '/' . $newName)) {
-                    $attachment_path = '/uploads/submissions/' . $newName;
-                }
-            }
-        }
-
-        $attachment_sql = $attachment_path ? "'" . $conn->real_escape_string($attachment_path) . "'" : 'NULL';
+        // Attachments are disabled: students cannot upload files.
+        $attachment_sql = 'NULL';
         $answer_sql = $conn->real_escape_string($answer_text);
 
         // If the schema uses `student_id` (older installs), populate it as well to avoid missing-not-default errors
@@ -119,24 +104,8 @@ class StudentController {
                 $field = 'answer_q_' . $qid;
                 $answer_text = isset($_POST[$field]) ? trim($_POST[$field]) : '';
 
-                $attachment_path = null;
-                $fkey = 'attachment_q_' . $qid;
-                if (!empty($_FILES[$fkey]['name'])) {
-                    $tmp = $_FILES[$fkey]['tmp_name'];
-                    $orig = basename($_FILES[$fkey]['name']);
-                    $ext = pathinfo($orig, PATHINFO_EXTENSION);
-                    $allowed = ['pdf','doc','docx','ppt','pptx','jpg','jpeg','png'];
-                    if (in_array(strtolower($ext), $allowed) && $_FILES[$fkey]['size'] <= 10 * 1024 * 1024) {
-                        $newName = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-                        $uploadDir = __DIR__ . '/../../public/uploads/submissions';
-                        if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-                        if (move_uploaded_file($tmp, $uploadDir . '/' . $newName)) {
-                            $attachment_path = '/uploads/submissions/' . $newName;
-                        }
-                    }
-                }
-
-                $attachment_sql = $attachment_path ? "'" . $conn->real_escape_string($attachment_path) . "'" : 'NULL';
+                // Attachments are disabled: students cannot upload files.
+                $attachment_sql = 'NULL';
                 $answer_sql = $conn->real_escape_string($answer_text);
 
                 // find related challenge for this question
@@ -187,24 +156,8 @@ class StudentController {
                 $field = 'answer_' . $cid;
                 $answer_text = isset($_POST[$field]) ? trim($_POST[$field]) : '';
 
-                $attachment_path = null;
-                $fkey = 'attachment_' . $cid;
-                if (!empty($_FILES[$fkey]['name'])) {
-                    $tmp = $_FILES[$fkey]['tmp_name'];
-                    $orig = basename($_FILES[$fkey]['name']);
-                    $ext = pathinfo($orig, PATHINFO_EXTENSION);
-                    $allowed = ['pdf','doc','docx','ppt','pptx','jpg','jpeg','png'];
-                    if (in_array(strtolower($ext), $allowed) && $_FILES[$fkey]['size'] <= 10 * 1024 * 1024) {
-                        $newName = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-                        $uploadDir = __DIR__ . '/../../public/uploads/submissions';
-                        if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-                        if (move_uploaded_file($tmp, $uploadDir . '/' . $newName)) {
-                            $attachment_path = '/uploads/submissions/' . $newName;
-                        }
-                    }
-                }
-
-                $attachment_sql = $attachment_path ? "'" . $conn->real_escape_string($attachment_path) . "'" : 'NULL';
+                // Attachments are disabled: students cannot upload files.
+                $attachment_sql = 'NULL';
                 $answer_sql = $conn->real_escape_string($answer_text);
 
                 $submissionDate = $getSubmissionDate();

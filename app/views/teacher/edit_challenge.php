@@ -36,7 +36,7 @@ if (!isset($challenge) || !is_array($challenge)) {
         <p class="page-subtitle">Perbarui detail tantangan agar siswa mendapatkan instruksi yang tepat.</p>
 
         <div class="form-card">
-            <form action="/teacher/challenges/<?= $challenge['id'] ?>/edit" method="POST" enctype="multipart/form-data">
+            <form action="/teacher/challenges/<?= $challenge['id'] ?>/edit" method="POST">
                 <div class="field-grid">
                     <div class="field-group full">
                         <label for="title">Judul Tantangan</label>
@@ -75,20 +75,9 @@ if (!isset($challenge) || !is_array($challenge)) {
                         </div>
                     </div>
 
-                    <div class="field-group full">
-                        <label for="attachment">Lampiran (opsional)</label>
-                        <div style="display:flex;align-items:center;gap:12px;flex-direction:column;align-items:flex-start;">
-                            <div style="display:flex;align-items:center;gap:12px;">
-                                <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
-                                <small style="color:#64748b;">Maks. 10MB (PDF, DOC, DOCX, PPT, PPTX, JPG, PNG)</small>
-                            </div>
-                            <?php if (!empty($challenge['attachment'])): ?>
-                                <div><a href="<?= htmlspecialchars($challenge['attachment']) ?>" target="_blank">Lihat lampiran saat ini</a></div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
+
                     <div class="field-group">
-                        <label for="week_number">Tingkat/Kelas</label>
+                        <label for="week_number">Minggu</label>
                         <input type="number" id="week_number" name="week_number" min="1" value="<?= htmlspecialchars($challenge['week_number']) ?>" required>
                     </div>
                     <div class="field-group">

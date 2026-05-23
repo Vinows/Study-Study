@@ -16,8 +16,8 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 <body>
 <div class="container">
-    <h1>Kerjakan Semua Tantangan Minggu <?= $current_week ?></h1>
-    <form action="/challenge/submit-multiple" method="POST" enctype="multipart/form-data">
+<h1 class="page-title">Kerjakan Semua Tantangan Minggu <?= $current_week ?></h1>
+    <form action="/challenge/submit-multiple" method="POST">
         <?php if (empty($challenges)): ?>
             <div class="card">Tidak ada tantangan untuk minggu ini.</div>
         <?php else: ?>
@@ -45,7 +45,7 @@ if (!isset($_SESSION['user_id'])) {
                                     <div>
                                         <textarea name="answer_q_<?= $q['id'] ?>" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb"></textarea>
                                     </div>
-                                    <div style="margin-top:8px"><input type="file" name="attachment_q_<?= $q['id'] ?>"></div>
+
                                 <?php endif; ?>
                                 <input type="hidden" name="question_ids[]" value="<?= intval($q['id']) ?>">
                             </div>
@@ -68,7 +68,7 @@ if (!isset($_SESSION['user_id'])) {
                             <div>
                                 <textarea name="answer_<?= $c['id'] ?>" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb"></textarea>
                             </div>
-                            <div style="margin-top:8px"><input type="file" name="attachment_<?= $c['id'] ?>"></div>
+
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
