@@ -72,6 +72,17 @@ class TeacherController {
             $due_date = $conn->real_escape_string(trim($_POST['due_date'] ?? ''));
             $points = intval($_POST['points'] ?? 0);
             $challenge_type = $conn->real_escape_string(trim($_POST['challenge_type'] ?? 'Tugas'));
+            $answer_type = $conn->real_escape_string(trim($_POST['answer_type'] ?? 'essay'));
+            $options = [];
+            if ($answer_type === 'multiple_choice' && isset($_POST['options']) && is_array($_POST['options'])) {
+                foreach ($_POST['options'] as $opt) {
+                    $opt = trim($opt);
+                    if ($opt !== '') {
+                        $options[] = $opt;
+                    }
+                }
+            }
+            $options_sql = !empty($options) ? "'" . $conn->real_escape_string(json_encode($options, JSON_UNESCAPED_UNICODE)) . "'" : 'NULL';
 
             // handle optional attachment
             $attachment_sql = 'NULL';
@@ -91,7 +102,28 @@ class TeacherController {
             }
 
             $due_date_sql = $due_date !== '' ? "'$due_date'" : 'NULL';
-            $conn->query("INSERT INTO challenges (title, description, category, week_number, due_date, points, challenge_type, attachment) VALUES ('$title', '$description', '$category', $week_number, $due_date_sql, $points, '$challenge_type', $attachment_sql)");
+            $conn->query("INSERT INTO challenges (title, description, category, week_number, due_date, points, challenge_type, answer_type, options, attachment) VALUES ('$title', '$description', '$category', $week_number, $due_date_sql, $points, '$challenge_type', '$answer_type', $options_sql, $attachment_sql)");
+            $challenge_id = $conn->insert_id;
+
+            // Save questions if provided (questions[], q_answer_type[], q_options[index][][])
+            if (isset($_POST['questions']) && is_array($_POST['questions'])) {
+                foreach ($_POST['questions'] as $i => $qText) {
+                    $qText = trim($qText);
+                    if ($qText === '') continue;
+                    $qType = isset($_POST['q_answer_type'][$i]) ? $conn->real_escape_string($_POST['q_answer_type'][$i]) : $answer_type;
+                    $qOptionsSql = 'NULL';
+                    if ($qType === 'multiple_choice' && isset($_POST['q_options'][$i]) && is_array($_POST['q_options'][$i])) {
+                        $opts = [];
+                        foreach ($_POST['q_options'][$i] as $opt) {
+                            $opt = trim($opt);
+                            if ($opt !== '') $opts[] = $opt;
+                        }
+                        if (!empty($opts)) $qOptionsSql = "'" . $conn->real_escape_string(json_encode($opts, JSON_UNESCAPED_UNICODE)) . "'";
+                    }
+                    $pos = intval($i);
+                    $conn->query("INSERT INTO questions (challenge_id, question_text, answer_type, options, position) VALUES ($challenge_id, '" . $conn->real_escape_string($qText) . "', '$qType', $qOptionsSql, $pos)");
+                }
+            }
             header('Location: /teacher/challenges');
             exit;
         }
@@ -112,6 +144,11 @@ class TeacherController {
             exit;
         }
 
+        // fetch existing questions for edit view
+        $questions = [];
+        $qres = $conn->query("SELECT * FROM questions WHERE challenge_id = $challenge_id ORDER BY position ASC, id ASC");
+        if ($qres) while ($qr = $qres->fetch_assoc()) $questions[] = $qr;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $title = $conn->real_escape_string(trim($_POST['title'] ?? ''));
             $description = $conn->real_escape_string(trim($_POST['description'] ?? ''));
@@ -120,6 +157,17 @@ class TeacherController {
             $due_date = $conn->real_escape_string(trim($_POST['due_date'] ?? ''));
             $points = intval($_POST['points'] ?? 0);
             $challenge_type = $conn->real_escape_string(trim($_POST['challenge_type'] ?? 'Tugas'));
+            $answer_type = $conn->real_escape_string(trim($_POST['answer_type'] ?? 'essay'));
+            $options = [];
+            if ($answer_type === 'multiple_choice' && isset($_POST['options']) && is_array($_POST['options'])) {
+                foreach ($_POST['options'] as $opt) {
+                    $opt = trim($opt);
+                    if ($opt !== '') {
+                        $options[] = $opt;
+                    }
+                }
+            }
+            $options_sql = !empty($options) ? "'" . $conn->real_escape_string(json_encode($options, JSON_UNESCAPED_UNICODE)) . "'" : 'NULL';
             $due_date_sql = $due_date !== '' ? "'$due_date'" : 'NULL';
 
             $attachment_sql = '';
@@ -138,7 +186,29 @@ class TeacherController {
                 }
             }
 
-            $conn->query("UPDATE challenges SET title='$title', description='$description', category='$category', week_number=$week_number, due_date=$due_date_sql, points=$points, challenge_type='$challenge_type' $attachment_sql WHERE id = $challenge_id");
+            $conn->query("UPDATE challenges SET title='$title', description='$description', category='$category', week_number=$week_number, due_date=$due_date_sql, points=$points, challenge_type='$challenge_type', answer_type='$answer_type', options=$options_sql $attachment_sql WHERE id = $challenge_id");
+
+            // Replace existing questions: remove and re-insert
+            $conn->query("DELETE FROM questions WHERE challenge_id = $challenge_id");
+            if (isset($_POST['questions']) && is_array($_POST['questions'])) {
+                foreach ($_POST['questions'] as $i => $qText) {
+                    $qText = trim($qText);
+                    if ($qText === '') continue;
+                    $qType = isset($_POST['q_answer_type'][$i]) ? $conn->real_escape_string($_POST['q_answer_type'][$i]) : $answer_type;
+                    $qOptionsSql = 'NULL';
+                    if ($qType === 'multiple_choice' && isset($_POST['q_options'][$i]) && is_array($_POST['q_options'][$i])) {
+                        $opts = [];
+                        foreach ($_POST['q_options'][$i] as $opt) {
+                            $opt = trim($opt);
+                            if ($opt !== '') $opts[] = $opt;
+                        }
+                        if (!empty($opts)) $qOptionsSql = "'" . $conn->real_escape_string(json_encode($opts, JSON_UNESCAPED_UNICODE)) . "'";
+                    }
+                    $pos = intval($i);
+                    $conn->query("INSERT INTO questions (challenge_id, question_text, answer_type, options, position) VALUES ($challenge_id, '" . $conn->real_escape_string($qText) . "', '$qType', $qOptionsSql, $pos)");
+                }
+            }
+
             header('Location: /teacher/challenges');
             exit;
         }
@@ -192,12 +262,32 @@ class TeacherController {
         $logEntry = date('c') . " | delete_challenge id=$challenge_id | err=" . ($err ?: 'none') . "\n";
         @file_put_contents(__DIR__ . '/../../storage/delete_challenge.log', $logEntry, FILE_APPEND | LOCK_EX);
 
-        // If deletion failed, fall back to soft-hide the challenge so it no longer appears
+        // If deletion failed, try stronger approaches then fall back to soft-hide
         if ($err) {
-            // attempt to mark the challenge inactive so it is hidden from lists
-            @file_put_contents(__DIR__ . '/../../storage/delete_challenge.log', date('c') . " | delete_failed id=$challenge_id | err=" . ($err ?: 'unknown') . "\n", FILE_APPEND | LOCK_EX);
-            $safe = $conn->real_escape_string('inactive');
-            $conn->query("UPDATE challenges SET status='$safe' WHERE id = $challenge_id");
+            $logPath = __DIR__ . '/../../storage/delete_challenge.log';
+            file_put_contents($logPath, date('c') . " | initial_delete_failed id=$challenge_id | err=" . ($err ?: 'unknown') . "\n", FILE_APPEND | LOCK_EX);
+
+            // Try disabling foreign key checks and re-attempt delete
+            $conn->query('SET FOREIGN_KEY_CHECKS=0');
+            $retryErr = null;
+            if (! $conn->query("DELETE FROM submissions WHERE challenge_id = $challenge_id")) {
+                $retryErr = $conn->error;
+            }
+            if (! $conn->query("DELETE FROM user_challenges WHERE challenge_id = $challenge_id")) {
+                $retryErr = $retryErr ?: $conn->error;
+            }
+            if (! $conn->query("DELETE FROM challenges WHERE id = $challenge_id")) {
+                $retryErr = $retryErr ?: $conn->error;
+            }
+            $conn->query('SET FOREIGN_KEY_CHECKS=1');
+
+            if ($retryErr) {
+                file_put_contents($logPath, date('c') . " | retry_delete_failed id=$challenge_id | err=" . ($retryErr ?: 'unknown') . "\n", FILE_APPEND | LOCK_EX);
+                $safe = $conn->real_escape_string('inactive');
+                $conn->query("UPDATE challenges SET status='$safe' WHERE id = $challenge_id");
+            } else {
+                file_put_contents($logPath, date('c') . " | retry_delete_ok id=$challenge_id\n", FILE_APPEND | LOCK_EX);
+            }
         }
 
         // If request is AJAX, return JSON; otherwise redirect

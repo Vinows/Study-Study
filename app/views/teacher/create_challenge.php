@@ -104,6 +104,35 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                         </div>
                     </div>
                     <div class="field-group">
+                        <label for="answer_type">Format Jawaban</label>
+                        <div class="choice-cards">
+                            <label class="choice-card answer-choice">
+                                <input type="radio" name="answer_type" value="essay" checked>
+                                <div class="choice-content">
+                                    <div class="choice-title">Essay</div>
+                                    <div class="choice-desc">Siswa menulis jawaban terbuka</div>
+                                </div>
+                            </label>
+                            <label class="choice-card answer-choice">
+                                <input type="radio" name="answer_type" value="multiple_choice">
+                                <div class="choice-content">
+                                    <div class="choice-title">Pilihan Ganda</div>
+                                    <div class="choice-desc">Siswa memilih jawaban yang benar</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field-group full" id="mcq-options" style="display:none;">
+                        <label>Opsi Pilihan Ganda</label>
+                        <div style="display:grid;gap:12px;">
+                            <input type="text" name="options[]" placeholder="Pilihan 1">
+                            <input type="text" name="options[]" placeholder="Pilihan 2">
+                            <input type="text" name="options[]" placeholder="Pilihan 3">
+                            <input type="text" name="options[]" placeholder="Pilihan 4">
+                        </div>
+                        <small style="color:#64748b;">Masukkan setidaknya dua opsi jika memilih Pilihan Ganda.</small>
+                    </div>
+                    <div class="field-group">
                         <label for="week_number">Tingkat/Kelas</label>
                         <input type="number" id="week_number" name="week_number" placeholder="Contoh: 1" min="1" value="1" required>
                     </div>
@@ -124,6 +153,13 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                     </div>
                 </div>
 
+                <hr style="margin:20px 0; border:none; border-top:1px solid #eef2ff">
+                <h3 style="margin-top:0">Pertanyaan</h3>
+                <div id="questions-container"></div>
+                <div style="margin-top:12px">
+                    <button type="button" id="add-question" class="btn-secondary">+ Tambah Pertanyaan</button>
+                </div>
+
                 <div class="form-actions">
                     <a href="/teacher/challenges" class="btn-secondary">Batal</a>
                     <button type="submit" class="btn-primary">Buat Tantangan</button>
@@ -132,5 +168,71 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
         </div>
     </main>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mcqSection = document.getElementById('mcq-options');
+    const answerRadios = document.querySelectorAll('input[name="answer_type"]');
+    function updateMcqSection() {
+        const selected = document.querySelector('input[name="answer_type"]:checked');
+        if (selected && selected.value === 'multiple_choice') {
+            mcqSection.style.display = 'block';
+        } else {
+            mcqSection.style.display = 'none';
+        }
+    }
+    answerRadios.forEach(radio => radio.addEventListener('change', updateMcqSection));
+    updateMcqSection();
+    // Questions dynamic list
+    const qContainer = document.getElementById('questions-container');
+    let qIndex = 0;
+    function renderQuestion(index, data = {}) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'field-group full';
+        wrapper.style.border = '1px solid #e6eefc';
+        wrapper.style.padding = '12px';
+        wrapper.style.borderRadius = '12px';
+        wrapper.style.marginBottom = '12px';
+        wrapper.dataset.index = index;
+        const qt = data.text ? data.text : '';
+        const at = data.type ? data.type : 'essay';
+        const opts = Array.isArray(data.options) ? data.options : [];
+        wrapper.innerHTML = `
+            <label style="font-weight:700">Pertanyaan</label>
+            <textarea name="questions[]" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb">${qt}</textarea>
+            <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
+                <label style="font-weight:700">Tipe Jawaban</label>
+                <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="q_answer_type[${index}]" value="essay" ${at === 'essay' ? 'checked' : ''}> Essay</label>
+                <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="q_answer_type[${index}]" value="multiple_choice" ${at === 'multiple_choice' ? 'checked' : ''}> Pilihan Ganda</label>
+                <button type="button" class="btn-secondary btn-remove-q" style="margin-left:auto">Hapus</button>
+            </div>
+            <div class="q-mcq-options" style="margin-top:8px; display:${at === 'multiple_choice' ? 'block' : 'none'}">
+                <label>Opsi</label>
+                <div class="opts-list" style="display:grid;gap:8px">
+                </div>
+                <div style="margin-top:8px"><button type="button" class="btn-secondary btn-add-opt">+ Tambah Opsi</button></div>
+            </div>
+        `;
+        qContainer.appendChild(wrapper);
+
+        const optsList = wrapper.querySelector('.opts-list');
+        function addOpt(val = '') {
+            const opt = document.createElement('div');
+            opt.style.display = 'flex'; opt.style.gap = '8px'; opt.style.alignItems = 'center';
+            opt.innerHTML = `<input type="text" name="q_options[${index}][]" value="${val}" placeholder="Opsi"> <button type="button" class="btn-secondary btn-remove-opt">-</button>`;
+            optsList.appendChild(opt);
+            opt.querySelector('.btn-remove-opt').addEventListener('click', () => opt.remove());
+        }
+        if (opts.length) for (const o of opts) addOpt(o);
+        wrapper.querySelector('.btn-add-opt').addEventListener('click', () => addOpt(''));
+        wrapper.querySelectorAll(`input[name=\"q_answer_type[${index}]\"]`).forEach(r => r.addEventListener('change', function(){
+            wrapper.querySelector('.q-mcq-options').style.display = this.value === 'multiple_choice' ? 'block' : 'none';
+        }));
+        wrapper.querySelector('.btn-remove-q').addEventListener('click', () => wrapper.remove());
+    }
+    document.getElementById('add-question').addEventListener('click', function(){ renderQuestion(qIndex++); });
+    // add one initial question
+    renderQuestion(qIndex++);
+});
+</script>
 </body>
 </html>

@@ -88,49 +88,65 @@ $result = $conn->query($query);
             </div>
 
             <div class="challenge-list">
-                <?php while ($row = $result->fetch_assoc()): ?>
-                    <div class="challenge-card">
-                        <div class="meta-row" style="margin-bottom: 18px; align-items: center;">
-                            <div>
-                                <h3><?= htmlspecialchars($row['title']) ?></h3>
-                                <div class="tag-row">
-                                    <span class="tag-pill"><?= htmlspecialchars($row['category']) ?></span>
-                                    <span class="tag-pill"><?= htmlspecialchars($row['challenge_type']) ?></span>
-                                    <span class="tag-pill"><?= intval($row['points']) ?> Poin</span>
+                <?php if ($result && $result->num_rows === 0): ?>
+                    <div class="challenge-card" style="text-align:center; padding: 40px;">
+                        <h3>Tidak ada tantangan saat ini.</h3>
+                        <p style="color:#475569; margin-top: 12px;">Guru belum menambahkan tantangan. Silakan kembali nanti atau hubungi guru Anda.</p>
+                    </div>
+                <?php else: ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <div class="challenge-card">
+                            <div class="meta-row" style="margin-bottom: 18px; align-items: center;">
+                                <div>
+                                    <h3><?= htmlspecialchars($row['title']) ?></h3>
+                                    <div class="tag-row">
+                                        <span class="tag-pill"><?= htmlspecialchars($row['category']) ?></span>
+                                        <span class="tag-pill"><?= htmlspecialchars($row['challenge_type']) ?></span>
+                                        <span class="tag-pill"><?= intval($row['points']) ?> Poin</span>
+                                    </div>
+                                </div>
+                                <div class="status-badge <?= $row['status'] === 'completed' ? 'status-done' : 'status-pending' ?>">
+                                    <?= $row['status'] === 'completed' ? 'Selesai' : 'In Progress' ?>
                                 </div>
                             </div>
-                            <div class="status-badge <?= $row['status'] === 'completed' ? 'status-done' : 'status-pending' ?>">
-                                <?= $row['status'] === 'completed' ? 'Selesai' : 'In Progress' ?>
+                            <p><?= htmlspecialchars($row['description']) ?></p>
+                            <div class="meta-row">
+                                <div class="meta-card">Minggu ke-<?= intval($row['week_number']) ?></div>
+                                <div class="meta-card">Tenggat: <?= $row['due_date'] ? date('d M Y', strtotime($row['due_date'])) : 'Belum ditentukan' ?></div>
                             </div>
-                        </div>
-                        <p><?= htmlspecialchars($row['description']) ?></p>
-                        <div class="meta-row">
-                            <div class="meta-card">Minggu ke-<?= intval($row['week_number']) ?></div>
-                            <div class="meta-card">Tenggat: <?= $row['due_date'] ? date('d M Y', strtotime($row['due_date'])) : 'Belum ditentukan' ?></div>
-                        </div>
-                        <?php if ($row['status'] === 'completed'): ?>
-                            <button class="btn-done" disabled>Sudah Selesai ✓</button>
-                        <?php else: ?>
-                            <?php if ($row['challenge_type'] === 'Tugas'): ?>
-                                <form class="challenge-submit" action="/challenge/submit" method="POST" enctype="multipart/form-data">
+                            <?php if ($row['status'] === 'completed'): ?>
+                                <button class="btn-done" disabled>Sudah Selesai ✓</button>
+                            <?php else: ?>
+                                <form class="challenge-submit" action="/challenge/submit" method="POST" <?= $row['answer_type'] === 'multiple_choice' ? '' : 'enctype="multipart/form-data"' ?>>
                                     <input type="hidden" name="challenge_id" value="<?= $row['id'] ?>">
-                                    <div style="margin:12px 0;"> 
-                                        <textarea name="answer_text" placeholder="Tulis jawaban singkat atau instruksi pengumpulan..." rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb"></textarea>
-                                    </div>
-                                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-                                        <input type="file" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
-                                    </div>
+                                    <?php if ($row['answer_type'] === 'multiple_choice'): ?>
+                                        <?php $options = json_decode($row['options'] ?? '[]', true); ?>
+                                        <?php if (!empty($options) && is_array($options)): ?>
+                                            <div style="margin:12px 0; display:flex; flex-direction:column; gap:10px;">
+                                                <?php foreach ($options as $option): ?>
+                                                    <label style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:#f8fafc; border-radius:12px; cursor:pointer;">
+                                                        <input type="radio" name="answer_text" value="<?= htmlspecialchars($option, ENT_QUOTES) ?>" required>
+                                                        <span><?= htmlspecialchars($option) ?></span>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <div style="margin:12px 0; color:#b91c1c;">Tidak ada opsi tersedia untuk tantangan pilihan ganda ini.</div>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <div style="margin:12px 0;"> 
+                                            <textarea name="answer_text" placeholder="Tulis jawaban singkat atau instruksi pengumpulan..." rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb" required></textarea>
+                                        </div>
+                                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                                            <input type="file" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
+                                        </div>
+                                    <?php endif; ?>
                                     <button type="submit" name="submit_answer" class="btn-complete">Kirim Jawaban</button>
                                 </form>
-                            <?php else: ?>
-                                <form method="POST">
-                                    <input type="hidden" name="challenge_id" value="<?= $row['id'] ?>">
-                                    <button type="submit" name="complete_challenge" class="btn-complete">Selesaikan</button>
-                                </form>
                             <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                <?php endwhile; ?>
+                        </div>
+                    <?php endwhile; ?>
+                <?php endif; ?>
             </div>
         </main>
     </div>
@@ -150,6 +166,13 @@ $result = $conn->query($query);
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     });
                     var data = await res.json();
+                // make entire card clickable to open the take-all page, but ignore clicks inside forms/controls
+                document.querySelectorAll('.challenge-card').forEach(function(card){
+                    card.addEventListener('click', function(e){
+                        if (e.target.closest('form') || e.target.closest('button') || e.target.closest('input') || e.target.closest('a')) return;
+                        window.location.href = '/challenge/take';
+                    });
+                });
                     if (data && data.success) {
                         card.style.transition = 'opacity 300ms, height 300ms';
                         card.style.opacity = 0;

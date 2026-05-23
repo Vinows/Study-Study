@@ -101,6 +101,7 @@ if ($result) {
                     <p class="challenge-description"><?= htmlspecialchars($challenge['description']) ?></p>
                     <div class="tag-list">
                         <span class="tag-pill"><?= htmlspecialchars($challenge['category']) ?></span>
+                        <span class="tag-pill"><?= htmlspecialchars($challenge['answer_type'] === 'multiple_choice' ? 'Pilihan Ganda' : 'Essay') ?></span>
                         <span class="tag-pill"><?= htmlspecialchars($challenge['points']) ?> Poin</span>
                         <?php if (!empty($challenge['attachment'])): ?>
                             <a class="tag-pill" href="<?= htmlspecialchars($challenge['attachment']) ?>" target="_blank">Lampiran</a>

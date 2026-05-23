@@ -40,6 +40,16 @@ $schema = [
         week_number INT NOT NULL DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )",
+    "CREATE TABLE IF NOT EXISTS questions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        challenge_id INT NOT NULL,
+        question_text TEXT NOT NULL,
+        answer_type ENUM('essay','multiple_choice') NOT NULL DEFAULT 'essay',
+        options TEXT NULL,
+        position INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (challenge_id) REFERENCES challenges(id) ON DELETE CASCADE
+    )",
     "CREATE TABLE IF NOT EXISTS user_challenges (
         user_id INT NOT NULL,
         challenge_id INT NOT NULL,
@@ -73,8 +83,10 @@ $fieldsToAdd = [
     'due_date' => "ALTER TABLE challenges ADD COLUMN due_date DATETIME NULL",
     'points' => "ALTER TABLE challenges ADD COLUMN points INT NOT NULL DEFAULT 0",
     'challenge_type' => "ALTER TABLE challenges ADD COLUMN challenge_type VARCHAR(50) NOT NULL DEFAULT 'Tugas'",
+    'answer_type' => "ALTER TABLE challenges ADD COLUMN answer_type ENUM('essay','multiple_choice') NOT NULL DEFAULT 'essay'",
+    'options' => "ALTER TABLE challenges ADD COLUMN options TEXT NULL",
     'status' => "ALTER TABLE challenges ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active'",
-        'attachment' => "ALTER TABLE challenges ADD COLUMN attachment VARCHAR(255) NULL",
+    'attachment' => "ALTER TABLE challenges ADD COLUMN attachment VARCHAR(255) NULL",
 ];
 
 foreach ($fieldsToAdd as $field => $sql) {
@@ -121,12 +133,6 @@ if (! $defaultStudent) {
 }
 
 $challengeCount = $conn->query("SELECT COUNT(*) as cnt FROM challenges")->fetch_assoc()['cnt'];
-if ($challengeCount == 0) {
-    $conn->query("INSERT INTO challenges (title, description, category, week_number) VALUES
-        ('Mulai Hari dengan Kosakata Baru', 'Pelajari 10 kata baru hari ini dengan kuis cepat.', 'Vocabulary', 1),
-        ('Baca Paragraf Pendek', 'Baca paragraf bahasa target selama 5 menit dan catat 3 kosakata baru.', 'Reading', 1),
-        ('Latihan Mendengarkan', 'Dengarkan dialog pendek dan tulis ringkasannya.', 'Listening', 1)");
-}
-
+// Do not auto-seed challenges. The app should start empty until the teacher adds content.
 $current_week = 1;
 ?>

@@ -9,6 +9,7 @@ $router->add('GET', '/', 'LandingController', 'index');
 $router->add('GET', '/login', 'AuthController', 'login');
 $router->add('GET', '/register', 'AuthController', 'register');
 $router->add('GET', '/challenge', 'ChallengeController', 'Challenge');
+$router->add('GET', '/challenge/take', 'ChallengeController', 'Take');
 $router->add('GET', '/progress', 'ProgressController', 'Progress');
 $router->add('GET', '/history', 'HistoryController', 'History');
 $router->add('GET', '/profile', 'ProfileController', 'Profile');
@@ -25,6 +26,7 @@ $router->add('POST', '/teacher/submissions/{id}/grade', 'TeacherController', 'Gr
 $router->add('GET', '/logout', 'AuthController', 'logout');
 // Student submission endpoint
 $router->add('POST', '/challenge/submit', 'StudentController', 'SubmitChallenge');
+$router->add('POST', '/challenge/submit-multiple', 'StudentController', 'SubmitBulk');
 
 $router->run();
 ?>
