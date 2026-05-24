@@ -1,0 +1,132 @@
+.main-content h2 {
+    font-size: 2.4rem; 
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0; 
+    letter-spacing: -0.02em;
+    text-shadow: 3px 3px 0px #1E293B;
+}
+
+/* ... STYLE BAWAAN ANDA ... (Pastikan style layout dasar sidebar & main-content tetap ada) */
+.history-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 24px; 
+}
+
+
+/* --- KARTU HISTORY UTAMA --- */
+.history-card { 
+    background: #ffffff; 
+    border: 3px solid #1E293B; 
+    border-radius: 20px; 
+    padding: 28px 32px; 
+    display: flex; 
+    align-items: flex-start; /* Diubah agar rapi jika teks feedback cukup panjang */
+    justify-content: space-between; 
+    box-shadow: 6px 6px 0px #1E293B; 
+    transition: all 0.2s ease;
+}
+
+/* Efek interaktif saat kartu disorot */
+.history-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 10px 10px 0px #1E293B;
+}
+
+/* --- OVERRIDE INLINE STYLES (MAGIC TRICKS) --- */
+
+/* 1. Menimpa judul Challenge */
+.history-card > div:first-child > div:nth-child(1) {
+    font-weight: 900 !important;
+    font-size: 1.25rem !important;
+    color: #000000 !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* 2. Menimpa deskripsi Challenge */
+.history-card > div:first-child > div:nth-child(2) {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    margin-top: 8px !important;
+}
+
+/* 3. Menimpa kotak Nilai & Feedback */
+.history-card > div:first-child > div:nth-child(3) {
+    background: #FFDE4D !important; /* Warna kuning pop-out */
+    border: 2px solid #1E293B !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    color: #000000 !important;
+    box-shadow: 4px 4px 0px #1E293B !important;
+    font-weight: 600 !important;
+    margin-top: 16px !important;
+}
+
+/* 4. Menimpa area status di sebelah kanan */
+.history-card > div:last-child {
+    text-align: right;
+    min-width: 120px;
+}
+
+/* Label "Selesai" disulap menjadi Badge Brutalist */
+.history-card > div:last-child > div:first-child {
+    font-weight: 900 !important;
+    color: #064E3B !important;
+    background: #A7F3D0 !important; /* Hijau pastel */
+    border: 2px solid #1E293B !important;
+    padding: 6px 14px !important;
+    border-radius: 10px !important;
+    display: inline-block !important;
+    box-shadow: 3px 3px 0px #1E293B !important;
+}
+
+/* Teks "Dinilai: ..." */
+.history-card > div:last-child > div:last-child {
+    color: #1E293B !important;
+    font-weight: 800 !important;
+    margin-top: 14px !important;
+    font-size: 0.95rem !important;
+}
+
+/* 5. Menimpa Judul "Minggu X" dan Teks Kosong agar bergaya Neobrutalism */
+h3[style*="color:#fff"] {
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    margin-top: 16px !important;
+    margin-bottom: 8px !important;
+}
+
+p[style*="color:white"] {
+    font-weight: 700 !important;
+    color: #E2E8F0 !important;
+}
+
+/* --- PROGRESS BAR MINI & ICON (Jika ada) --- */
+.progress-mini-outline { 
+    width: 100%; 
+    height: 24px; 
+    background: #F8FAFC; 
+    border: 2px solid #1E293B; 
+    border-radius: 12px; 
+    overflow: hidden; 
+}
+
+.progress-mini-fill { 
+    height: 100%; 
+    background: #FFDE4D; 
+    border-right: 2px solid #1E293B; 
+    transition: width 0.5s ease; 
+}
+
+.arrow-icon { 
+    font-size: 2rem; 
+    cursor: pointer;
+    color: #1E293B;
+    transition: transform 0.2s;
+}
+
+.arrow-icon:hover {
+    transform: translateX(4px);
+}

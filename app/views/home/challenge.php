@@ -49,6 +49,9 @@ $result = $conn->query($query);
                 <a href="/profile" class="menu-item">Profile</a>
                 <a href="/logout" class="menu-item">Keluar</a>
             </nav>
+        <div class="sidebar-mascot">
+            <img src="/assets/Image1.png" alt="Mascot">
+        </div>
         </aside>
 
         <main class="main-content">

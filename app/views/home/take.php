@@ -16,7 +16,7 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 <body>
 <div class="container">
-    <h1>Kerjakan Semua Tantangan Minggu <?= $current_week ?></h1>
+    <h1>Kerjakan Tantangan Berikut Ini!</h1>
     <form action="/challenge/submit-multiple" method="POST" enctype="multipart/form-data">
         <?php if (empty($challenges)): ?>
             <div class="card">Tidak ada tantangan untuk minggu ini.</div>

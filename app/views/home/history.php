@@ -36,14 +36,7 @@ if ($res) {
     <meta charset="UTF-8">
     <title>StudyTrack - History</title>
     <link rel="stylesheet" href="/css/home.css">
-    <style>
-        /* ... STYLE BAWAAN ANDA ... */
-        .history-list { display: flex; flex-direction: column; gap: 30px; }
-        .history-card { background: #ffffff; border: 3px solid #000; border-radius: 20px; padding: 25px 35px; display: flex; align-items: center; justify-content: space-between; box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.05); }
-        .progress-mini-outline { width: 90%; height: 40px; background: #eee; border: 3px solid #000; border-radius: 15px; overflow: hidden; }
-        .progress-mini-fill { height: 100%; background: #76ff03; border-right: 3px solid #000; transition: 0.5s; }
-        .arrow-icon { font-size: 2.5rem; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" href="/css/history.css">
 </head>
 <body>
 <div class="dashboard-container">
@@ -56,10 +49,13 @@ if ($res) {
             <a href="/profile" class="menu-item">Profile</a>
             <a href="/logout" class="menu-item">Keluar</a>
         </nav>
+        <div class="sidebar-mascot">
+            <img src="/assets/Image1.png" alt="Mascot">
+        </div>
     </aside>
 
     <main class="main-content">
-        <h2 class="section-title">History Progress</h2>
+        <h2 class="section-title">History</h2>
         <div class="history-list">
             
             <?php if(empty($history_by_week)): ?>

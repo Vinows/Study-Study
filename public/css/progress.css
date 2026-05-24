@@ -1,0 +1,146 @@
+/* --- PROGRESS BAR COMPONENT --- */
+.progress-container { 
+    background: #ffffff; 
+    border: 3px solid #1E293B; /* Garis tepi tegas khas Neobrutalism */
+    border-radius: 24px; 
+    padding: 32px 40px; 
+    box-shadow: 8px 8px 0px #1E293B; /* Bayangan solid gelap */
+    transition: all 0.2s ease;
+}
+
+/* Sedikit efek interaktif agar wadah progres terasa dinamis */
+.progress-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 12px 12px 0px #1E293B;
+}
+
+.progress-title { 
+    font-weight: 900; 
+    font-size: 1.6rem; 
+    color: #000000;
+    margin-bottom: 24px; 
+    display: block; 
+    letter-spacing: -0.02em; /* Merapatkan spasi huruf agar judul lebih solid */
+}
+
+.progress-bar-outline { 
+    width: 100%; 
+    height: 48px; /* Dibuat sedikit lebih tebal dan proporsional */
+    background: #F8FAFC; 
+    border: 3px solid #1E293B; 
+    border-radius: 16px; 
+    overflow: hidden; 
+    margin-bottom: 24px; 
+    box-shadow: 4px 4px 0px #1E293B; /* Menambahkan efek 3D ke dalam bar progres */
+}
+
+.progress-bar-fill { 
+    height: 100%; 
+    background: #4ADE80; /* Menggunakan hijau pastel yang lebih segar dan pas dengan warna Neubrutalism */
+    border-right: 3px solid #1E293B; /* Garis batas progres yang tebal */
+    /* Menggunakan cubic-bezier agar animasi pengisian terasa sedikit 'membal' di akhir */
+    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1); 
+}
+
+/* --- OVERRIDE INLINE STYLES UNTUK PER-CHALLENGE PROGRESS --- */
+
+/* 1. Judul Section "Per-Challenge Progress" */
+.main-content h2[style*="margin"] {
+    font-size: 1.8rem !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    margin-top: 40px !important;
+    margin-bottom: 24px !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* 2. Container Grid */
+.challenge-progress-grid {
+    gap: 24px !important;
+    display: grid !important;
+    /* Lebar minimum disesuaikan agar tidak terlalu sempit */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; 
+}
+
+/* 3. Kartu Progress Challenge Utama */
+.challenge-progress-grid .card {
+    background: #ffffff !important;
+    border: 3px solid #1E293B !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+    box-shadow: 6px 6px 0px #1E293B !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+/* Efek angkat dan berubah kuning saat disorot */
+.challenge-progress-grid .card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 10px 10px 0px #1E293B !important;
+    background: #FFDE4D !important; 
+}
+
+/* 4. Judul Challenge di dalam Kartu */
+.challenge-progress-grid .card > div:nth-child(1) {
+    font-weight: 900 !important;
+    font-size: 1.2rem !important;
+    color: #000000 !important;
+    margin-bottom: 12px !important;
+    line-height: 1.3 !important;
+}
+
+/* 5. Deskripsi Challenge di dalam Kartu */
+.challenge-progress-grid .card > div:nth-child(2) {
+    font-size: 0.95rem !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+    margin-bottom: 24px !important;
+    line-height: 1.5 !important;
+}
+
+/* 6. Area Progress Bar Bawah */
+.challenge-progress-grid .card > div:nth-child(3) {
+    background: transparent !important; /* Hapus background abu-abu bawaan */
+    padding: 0 !important;
+    margin-top: auto !important; /* Memastikan bar selalu berada di bawah kartu */
+}
+
+/* Garis Luar (Outline) Mini Progress Bar */
+.challenge-progress-grid .card > div:nth-child(3) > div:nth-child(1) {
+    height: 20px !important;
+    background: #F8FAFC !important;
+    border: 2px solid #1E293B !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 3px 3px 0px #1E293B !important;
+}
+
+/* Isi (Fill) Mini Progress Bar */
+.challenge-progress-grid .card > div:nth-child(3) > div:nth-child(1) > div {
+    /* Kita JANGAN timpa background-nya agar warna dinamis dari PHP tetap jalan (hijau/kuning) */
+    border-right: 2px solid #1E293B !important; /* Tambahkan garis tegas di ujung bar */
+    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* 7. Teks Status ("Selesai/Belum") dan Persentase */
+.challenge-progress-grid .card > div:nth-child(3) > div:nth-child(2) {
+    margin-top: 14px !important;
+    font-weight: 800 !important;
+    color: #1E293B !important;
+    font-size: 0.95rem !important;
+}
+
+/* 8. Pesan Jika Belum Ada Tantangan (Empty State) */
+.main-content > div[style*="margin-top:28px"] > .card:not(.challenge-progress-grid .card) {
+    background: #ffffff !important;
+    border: 3px solid #1E293B !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+    box-shadow: 6px 6px 0px #1E293B !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    color: #000000 !important;
+    font-size: 1.1rem !important;
+}

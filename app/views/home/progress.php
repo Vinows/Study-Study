@@ -43,13 +43,7 @@ if ($sub_q) while ($r = $sub_q->fetch_assoc()) $submissions[] = $r;
     <meta charset="UTF-8">
     <title>StudyTrack - Progress</title>
     <link rel="stylesheet" href="/css/home.css">
-    <style>
-        /* ... STYLE BAWAAN ANDA ... */
-        .progress-container { background: white; border: 2px solid #000; border-radius: 25px; padding: 40px; box-shadow: 8px 8px 0px rgba(0,0,0,0.1); }
-        .progress-title { font-weight: 800; font-size: 1.5rem; margin-bottom: 20px; display: block; }
-        .progress-bar-outline { width: 100%; height: 50px; background: #eee; border: 2px solid #000; border-radius: 15px; overflow: hidden; margin-bottom: 25px; }
-        .progress-bar-fill { height: 100%; background: #76ff03; border-right: 2px solid #000; transition: width 0.5s ease-in-out; }
-    </style>
+    <link rel="stylesheet" href="/css/progress.css">
 </head>
 <body>
 <div class="dashboard-container">
@@ -62,6 +56,9 @@ if ($sub_q) while ($r = $sub_q->fetch_assoc()) $submissions[] = $r;
             <a href="/profile" class="menu-item">Profile</a>
             <a href="/logout" class="menu-item">Keluar</a>
         </nav>
+        <div class="sidebar-mascot">
+            <img src="/assets/Image1.png" alt="Mascot">
+        </div>
     </aside>
 
     <main class="main-content">
