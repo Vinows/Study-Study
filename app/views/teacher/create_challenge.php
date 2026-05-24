@@ -32,7 +32,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
         <p class="page-subtitle">Isi detail tantangan untuk siswa dan simpan.</p>
 
         <div class="form-card">
-            <form action="/teacher/challenges/create" method="POST" enctype="multipart/form-data">
+            <form action="/teacher/challenges/create" method="POST">
                 <div class="field-grid">
                     <div class="field-group full">
                         <label for="title">Judul Tantangan</label>
@@ -71,7 +71,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                         </div>
                     </div>
                     <div class="field-group">
-                        <label for="week_number">Tingkat/Kelas</label>
+                        <label for="week_number">Minggu</label>
                         <input type="number" id="week_number" name="week_number" placeholder="Contoh: 1" min="1" value="1" required>
                     </div>
                     <div class="field-group">
@@ -82,13 +82,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                         <label for="due_date">Tenggat Waktu</label>
                         <input type="datetime-local" id="due_date" name="due_date">
                     </div>
-                    <div class="field-group full">
-                        <label for="attachment">Lampiran (opsional)</label>
-                        <div style="display:flex;align-items:center;gap:12px;">
-                            <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
-                            <small style="color:#64748b;">Maks. 10MB (PDF, DOC, DOCX, PPT, PPTX, JPG, PNG)</small>
-                        </div>
-                    </div>
+
                 </div>
 
                 <hr style="margin:20px 0; border:none; border-top:1px solid #eef2ff">

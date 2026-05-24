@@ -25,7 +25,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
         </nav>
     </aside>
     <main class="main">
-        <h1>Submisi Siswa</h1>
+        <h1 class="page-title">Submisi Siswa</h1>
         <p>Daftar jawaban siswa untuk tantangan ini.</p>
 
         <?php if (empty($submissions)): ?>
@@ -44,9 +44,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
                         </div>
                     </div>
                     <div style="margin-top:12px;color:#475569"><?= nl2br(htmlspecialchars(substr($s['answer_text'],0,500))) ?></div>
-                    <?php if (!empty($s['attachment'])): ?>
-                        <div style="margin-top:8px"><a href="<?= htmlspecialchars($s['attachment']) ?>" target="_blank">Lihat lampiran</a></div>
-                    <?php endif; ?>
+
                     <?php if (!empty($s['grade'])): ?>
                         <div style="margin-top:8px;font-weight:700">Nilai: <?= intval($s['grade']) ?></div>
                         <div style="margin-top:6px;color:#334155">Feedback: <?= nl2br(htmlspecialchars($s['feedback'])) ?></div>

@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
 <body>
     <div class="wrap">
         <div class="card">
-            <h2>Nilai Submisi</h2>
+            <h2 class="page-title">Nilai Submisi</h2>
             <div style="margin-top:12px">
                 <strong>Siswa:</strong> <?= htmlspecialchars($submission['student_name']) ?> <br>
                 <strong>Dikirim pada:</strong> <?= date('d M Y H:i', strtotime($submission['created_at'])) ?>
@@ -25,9 +25,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'teacher') {
             <div style="margin-top:12px">
                 <h3>Jawaban</h3>
                 <div style="padding:12px;background:#f1f5f9;border-radius:8px"><?= nl2br(htmlspecialchars($submission['answer_text'])) ?></div>
-                <?php if (!empty($submission['attachment'])): ?>
-                    <div style="margin-top:8px"><a href="<?= htmlspecialchars($submission['attachment']) ?>" target="_blank">Lihat lampiran</a></div>
-                <?php endif; ?>
+
             </div>
 
             <form method="POST">

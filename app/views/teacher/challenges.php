@@ -68,12 +68,10 @@ if ($result) {
                         <span class="tag-pill"><?= htmlspecialchars($challenge['category']) ?></span>
                         <span class="tag-pill"><?= htmlspecialchars($challenge['answer_type'] === 'multiple_choice' ? 'Pilihan Ganda' : 'Essay') ?></span>
                         <span class="tag-pill"><?= htmlspecialchars($challenge['points']) ?> Poin</span>
-                        <?php if (!empty($challenge['attachment'])): ?>
-                            <a class="tag-pill" href="<?= htmlspecialchars($challenge['attachment']) ?>" target="_blank">Lampiran</a>
-                        <?php endif; ?>
+
                     </div>
                     <div class="meta-list">
-                        <div class="meta-item">Minggu ke-<?= htmlspecialchars($challenge['week_number']) ?></div>
+                        <div class="meta-item">Minggu <?= htmlspecialchars($challenge['week_number']) ?></div>
                         <div class="meta-item">Tenggat: <?= $challenge['due_date'] ? date('d M Y', strtotime($challenge['due_date'])) : 'Belum ditentukan' ?></div>
                     </div>
                     <div class="action-bar">
